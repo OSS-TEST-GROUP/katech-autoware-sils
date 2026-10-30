@@ -1,7 +1,7 @@
 {
-  "as_of": "2026-10-30T07:19:14.612938+00:00",
+  "as_of": "2026-10-30T09:54:10.706736+00:00",
   "passed": true,
-  "scope": "source checks, fresh downloads, asset installation and standalone CARLA asset smoke only",
+  "scope": "source checks, fresh downloads, standalone CARLA assets, native builds and synthetic GPU numerical parity; NOT integrated driving",
   "tests": {
     "runtime": 38,
     "classifier": 7,
@@ -92,13 +92,68 @@
     "client_exit": 0,
     "test_server_stopped": true
   },
-  "full_sils_build_verified": false,
+  "full_sils_build_verified": true,
   "runtime_integration_complete": false,
+  "native_image_ids": [
+    "sha256:c2448546755b73d7cd63d3549367d66cac8008aff4a4d7dfcac37b72823bd494",
+    "sha256:93fe736ac762f485ccadca09bab14066755ed12a6d7f95ea277b194d43c7b81f",
+    "sha256:5f3699d2a5320b9cbb494877072b8e758355538bf7f895d2c36e2f29542b5b54"
+  ],
+  "classifier_gpu_synthetic_validation": {
+    "schema": 1,
+    "scope": "synthetic FP32 GPU/CPU parity only",
+    "accuracy_test": false,
+    "integration_complete": false,
+    "results": [
+      {
+        "engine": "mobilenetv2_batch_1_fp32.engine",
+        "engine_sha256": "3c82939f00fbd37420c76084b45985c299527bf7651250050dbb5dac456044f3",
+        "onnx_sha256": "47a3cf703e2bf0eb5a89a27ba928d89611897f7a63ad96ee8ade6270bdb3f30a",
+        "batch": 1,
+        "trt_version": "10.8.0.43",
+        "precision_request": "fp32",
+        "tf32": false,
+        "workspace_mib": 512,
+        "build_seconds": 9.061284538998734,
+        "cases": 18,
+        "case_type": "zeros, ones, seeded uniform noise",
+        "max_absolute_error": 1.1920928955078125e-07,
+        "atol": 0.0002,
+        "finite_normalized": true,
+        "top1_agreement": true,
+        "signal_gate_agreement": true,
+        "repeat_500_bitwise_stable": true,
+        "latency_p95_ms": 0.3440344004047801,
+        "passed": true
+      },
+      {
+        "engine": "mobilenetv2_batch_6_fp32.engine",
+        "engine_sha256": "cd135acdb743bd63383721bec8b8062fb828419ee4c68dcb90d3dbc181da9283",
+        "onnx_sha256": "987c0a8d868ce11917481da2b2bf785609b549db6d41aed7d2d64e7220bd13d2",
+        "batch": 6,
+        "trt_version": "10.8.0.43",
+        "precision_request": "fp32",
+        "tf32": false,
+        "workspace_mib": 512,
+        "build_seconds": 7.319323716001236,
+        "cases": 18,
+        "case_type": "zeros, ones, seeded uniform noise",
+        "max_absolute_error": 1.1920928955078125e-07,
+        "atol": 0.0002,
+        "finite_normalized": true,
+        "top1_agreement": true,
+        "signal_gate_agreement": true,
+        "repeat_500_bitwise_stable": true,
+        "latency_p95_ms": 0.3890043546562083,
+        "passed": true
+      }
+    ]
+  },
   "autoware_driving_test_from_new_build": false,
   "recognition_accuracy_test": false,
   "other_pc_verified": false,
   "existing_live_simulation_modified": false,
   "final_manual_ready": false,
-  "source_files": 83,
-  "git_payload_bytes": 314262
+  "source_files": 87,
+  "git_payload_bytes": 332900
 }
