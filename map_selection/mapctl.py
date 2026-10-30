@@ -1,4 +1,4 @@
-"""Map selection and authenticated, pinned asset fetch for a future SILS launcher.
+"""Map catalog and authenticated pinned assets; session.py handles actual runtime.
 
 This does not start CARLA, connect to existing servers, or engage Autoware.
 Private coordinates/settings stay in the private bundle, never this catalog.
@@ -55,9 +55,11 @@ def read_catalog(path):
             valid_artifact(m['artifact'])
         elif m['distribution'] != 'official_carla' or m['artifact'] is not None:
             raise MapError('지원하지 않는 지도 배포 유형입니다.')
-        if m['autoware'].get('ready') is not False:
-            # Do not turn a boolean into a claim of complete runtime integration.
-            raise MapError('실행 어댑터 검증 전에는 Autoware ready를 활성화할 수 없습니다.')
+        ready=m['autoware'].get('ready')
+        if type(ready) is not bool:raise MapError('명시적인 ready 값이 필요합니다.')
+        if ready and not (m['id']=='ctrack' and m['autoware'].get('runtime_adapter')=='tools/session.py'
+            and m['autoware'].get('verification_scope')=='same_pc_headless_low_speed'):
+            raise MapError('지원하는 실행 어댑터와 검증 범위가 없는 지도입니다.')
     return data
 
 
@@ -71,7 +73,8 @@ def choose(catalog, ident=None, input_fn=input):
     if not sys.stdin.isatty():
         raise MapError('비대화형 실행에는 --map ID를 지정하세요.')
     for i, m in enumerate(maps, 1):
-        print(f'{i}. {m["label"]} — CARLA 자산 등록 / Autoware 연동 준비 중')
+        status='제한 범위 SILS 실행 지원' if m['autoware']['ready'] else 'Autoware 연동 준비 중'
+        print(f'{i}. {m["label"]} — {status}')
     answer = input_fn('지도 번호 (빈 입력은 취소): ').strip()
     if not answer.isdigit() or not 1 <= int(answer) <= len(maps):
         raise MapError('지도 선택을 취소했거나 번호가 잘못되었습니다.')
@@ -158,14 +161,15 @@ def plan(m, mode):
             'asset_source': m['distribution'], 'artifact': m['artifact'],
             'autoware_contract': m['autoware'], 'blockers': blockers,
             'auto_engage': False, 'changes_existing_simulation': False,
-            'runtime_started': False, 'runtime_adapter_connected': False}
+            'runtime_started': False, 'runtime_adapter_connected': False,
+            'runtime_adapter_available':m['autoware']['ready']}
 
 
 def select(m, mode, destination):
     record = plan(m, mode)
     if record['blockers']:
         raise MapError('Autoware 연동 실행 선택 불가: '+' '.join(record['blockers']))
-    # Selection is a future launcher input, not authorization to start a server.
+    # Selection never starts a server. Explicit session init/run remains required.
     with destination.open('x', encoding='utf-8') as output:
         json.dump(record, output, indent=2, ensure_ascii=False)
         output.write('\n')

@@ -1,14 +1,14 @@
 {
-  "as_of": "2026-10-30T11:23:10.538516+00:00",
+  "as_of": "2026-10-30T12:13:40.355165+00:00",
   "passed": true,
-  "scope": "Fresh builds/assets, GPU parity, stopped startup, bounded smoke, straight and protected-left native ARRIVED with one-approach signal checks; portable launcher and remaining integration checks incomplete",
+  "scope": "Same-PC fresh installation, headless simulator, selected low-speed routes and one signal approach; not full-road, high-speed, HIL, real vehicle, GUI or other-PC qualification",
   "tests": {
     "runtime": 58,
     "classifier": 7,
-    "preparation": 53,
-    "map_selection": 22
+    "preparation": 71,
+    "map_selection": 24
   },
-  "total_unit_tests": 140,
+  "total_unit_tests": 160,
   "models": [
     {
       "file": "korean_tl_yolox_s_pilot_batch_1.onnx",
@@ -93,7 +93,7 @@
     "test_server_stopped": true
   },
   "full_sils_build_verified": true,
-  "runtime_integration_complete": false,
+  "runtime_integration_complete": true,
   "native_image_ids": [
     "sha256:c2448546755b73d7cd63d3549367d66cac8008aff4a4d7dfcac37b72823bd494",
     "sha256:93fe736ac762f485ccadca09bab14066755ed12a6d7f95ea277b194d43c7b81f",
@@ -153,7 +153,7 @@
   "recognition_accuracy_test": false,
   "other_pc_verified": false,
   "existing_live_simulation_modified": false,
-  "final_manual_ready": false,
+  "final_manual_ready": true,
   "fresh_stopped_runtime_check": {
     "passed": true,
     "route_requested_while_stopped": true,
@@ -314,8 +314,138 @@
     },
     "redleft_stationary_minimum_seconds": 2.0,
     "redleft_stationary_duration_requirement_met": false,
-    "additional_confirmation_pending": true
+    "additional_confirmation_pending": false
   },
-  "source_files": 102,
-  "git_payload_bytes": 383358
+  "redleft_left_trial": {
+    "passed": true,
+    "distance_m": 37.941108294462005,
+    "max_ekf_gt_xy_m": 0.208146067981781,
+    "native_arrived": true,
+    "shutdown_passed": true,
+    "signal_evaluation": {
+      "movement": "left",
+      "samples": 316,
+      "phase_samples": {
+        "redleft": 91,
+        "yellow": 19,
+        "red": 206
+      },
+      "classification_counts": {
+        "redleft -> redleft": 91
+      },
+      "crossings": [
+        {
+          "visual_state": "redleft",
+          "recognized_label": "redleft",
+          "permission": true,
+          "visual_fresh": true,
+          "recognition_fresh": true,
+          "sample_interval_valid": true,
+          "speed_mps": 1.3000579910273065
+        }
+      ],
+      "stopped_on_nonpermissive_seconds": 0.0,
+      "stopped_on_nonpermissive_seconds_by_phase": {},
+      "stale_visual_samples": 0,
+      "stale_recognition_samples": 0,
+      "legal_stopline_crossing_observed": true,
+      "stop_then_permitted_crossing_observed": false,
+      "scope": "One approach; GT/visual states are evaluation only, no input to recognition/control. Not generalized accuracy or whole-map qualification."
+    }
+  },
+  "redleft_straight_confirmation": {
+    "passed": true,
+    "distance_m": 34.67520339710491,
+    "max_ekf_gt_xy_m": 0.16919900116066725,
+    "native_arrived": true,
+    "shutdown_passed": true,
+    "signal_evaluation": {
+      "movement": "straight",
+      "samples": 677,
+      "phase_samples": {
+        "redleft": 91,
+        "yellow": 19,
+        "red": 286,
+        "green": 185,
+        "greenleft": 96
+      },
+      "classification_counts": {
+        "redleft -> redleft": 91,
+        "yellow -> redleft": 1,
+        "yellow -> yellow": 18,
+        "red -> yellow": 4,
+        "red -> red": 282,
+        "green -> red": 1,
+        "green -> green": 35
+      },
+      "crossings": [
+        {
+          "visual_state": "green",
+          "recognized_label": "green",
+          "permission": true,
+          "visual_fresh": true,
+          "recognition_fresh": true,
+          "sample_interval_valid": true,
+          "speed_mps": 0.7056424016469991
+        }
+      ],
+      "stopped_on_nonpermissive_seconds": 41.50000061800003,
+      "stopped_on_nonpermissive_seconds_by_phase": {
+        "redleft": 9.550000142000016,
+        "yellow": 1.9000000289999548,
+        "red": 29.850000445000035
+      },
+      "stale_visual_samples": 0,
+      "stale_recognition_samples": 0,
+      "legal_stopline_crossing_observed": true,
+      "stop_then_permitted_crossing_observed": true,
+      "scope": "One approach; GT/visual states are evaluation only, no input to recognition/control. Not generalized accuracy or whole-map qualification."
+    }
+  },
+  "portable_session_checks": {
+    "runs": [
+      {
+        "startup_passed": true,
+        "shutdown_passed": true,
+        "shutdown_requested": null,
+        "native_stop_acknowledged": true,
+        "owned_server_stopped": true,
+        "explicit_bounded_trial": {
+          "passed": true,
+          "collision_events": 0,
+          "max_physical_speed_mps": 1.3439277410507202
+        },
+        "passed": true,
+        "distance_m": 8.014374254936236,
+        "max_ekf_gt_xy_m": 0.19917099092124077,
+        "native_trial_passed": true,
+        "stop_confirmed": true
+      },
+      {
+        "startup_passed": false,
+        "shutdown_passed": false,
+        "shutdown_requested": null,
+        "native_stop_acknowledged": false,
+        "owned_server_stopped": true,
+        "explicit_bounded_trial": null,
+        "passed": false
+      },
+      {
+        "startup_passed": true,
+        "shutdown_passed": true,
+        "shutdown_requested": true,
+        "native_stop_acknowledged": true,
+        "owned_server_stopped": true,
+        "explicit_bounded_trial": null,
+        "passed": true
+      }
+    ],
+    "new_port_and_domain": true,
+    "new_named_volumes": true,
+    "other_host_not_tested": true,
+    "normal_host_gpu_mode_runtime_tested": false
+  },
+  "integration_scope": "Same-PC fresh installation, headless simulator, selected low-speed routes and one signal approach; not full-road, high-speed, HIL, real vehicle, GUI or other-PC qualification",
+  "source_files": 105,
+  "git_payload_bytes": 433517
 }

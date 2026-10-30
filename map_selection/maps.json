@@ -38,8 +38,10 @@
         "sha256": "77243991f415b9d0ae6232f43e12d0d30d640ea166e68ba461e91a420f3828f7"
       },
       "autoware": {
-        "ready": false,
-        "reason": "tools/private_assets.py와 install_assets.py의 다운로드·NDT PCD 선택 및 CARLA 자산 기동 확인 완료. 새 컨테이너 빌드·Autoware 실행 어댑터·통합 주행 검증은 아직 미완료입니다.",
+        "ready": true,
+        "reason": "같은 PC의 새 설치에서 headless 저속 기본 통합·신호 판단·종료·재시작 확인. 다른 PC·전체 도로·고속·GUI·HIL·실차는 미검증입니다.",
+        "runtime_adapter": "tools/session.py",
+        "verification_scope": "same_pc_headless_low_speed",
         "map_paths": {
           "lanelet2": "autoware_map/lanelet2_map.osm",
           "pointcloud": "autoware_map/pointcloud_map.pcd",

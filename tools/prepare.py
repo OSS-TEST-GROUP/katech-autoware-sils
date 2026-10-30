@@ -115,7 +115,9 @@ def main():
     if args.action=='plan':
         print(json.dumps({'carla':load('carla.lock.json'),'sources':load('sources.lock.json'),
             'model_files':len(load('models/manifest.json')['files']),
-            'full_sils_integration_ready':False,'starts_simulation':False},indent=2));return
+            'runtime_entrypoint':'tools/session.py','supported_runtime_map':'ctrack',
+            'verification_report':'validation.json','target_system_preflight_required':True,
+            'starts_simulation':False},indent=2));return
     if args.destination is None:parser.error('--destination required')
     destination=args.destination.expanduser().resolve()
     if args.action=='sources':sources(destination)

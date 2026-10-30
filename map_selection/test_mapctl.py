@@ -135,6 +135,7 @@ class MapTests(unittest.TestCase):
 
     def test_sils_selection_blocked_without_matching_profile(self):
         for item in self.catalog['maps']:
+            if item['autoware']['ready']:continue
             out=self.root/(item['id']+'.json')
             with self.subTest(map=item['id']),self.assertRaises(m.MapError):m.select(item,'sils',out)
             self.assertFalse(out.exists())
@@ -151,6 +152,23 @@ class MapTests(unittest.TestCase):
 
     def test_catalog_cannot_claim_unimplemented_runtime_ready(self):
         data=copy.deepcopy(self.catalog);data['maps'][0]['autoware']['ready']=True
+        path=self.root/'catalog.json';path.write_text(json.dumps(data))
+        with self.assertRaises(m.MapError):m.read_catalog(path)
+
+    def test_supported_runtime_selection_still_does_not_launch(self):
+        item=copy.deepcopy(self.ctrack)
+        item['autoware'].update(ready=True,runtime_adapter='tools/session.py',verification_scope='same_pc_headless_low_speed')
+        data=copy.deepcopy(self.catalog);data['maps']=[item]
+        path=self.root/'catalog.json';path.write_text(json.dumps(data))
+        checked=m.read_catalog(path)['maps'][0]
+        selected=m.select(checked,'sils',self.root/'ready-selection.json')
+        self.assertFalse(selected['runtime_started']);self.assertFalse(selected['auto_engage'])
+        self.assertTrue(selected['runtime_adapter_available'])
+
+    def test_ready_without_scope_rejected(self):
+        item=copy.deepcopy(self.ctrack);item['autoware'].update(ready=True,runtime_adapter='tools/session.py')
+        item['autoware'].pop('verification_scope',None)
+        data=copy.deepcopy(self.catalog);data['maps']=[item]
         path=self.root/'catalog.json';path.write_text(json.dumps(data))
         with self.assertRaises(m.MapError):m.read_catalog(path)
 

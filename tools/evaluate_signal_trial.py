@@ -61,9 +61,11 @@ def evaluate(rows, approach, movement, front_offset):
         label=found[0]['prediction'].get('label','unknown') if len(found)==1 else 'unknown'
         if visual_fresh and recognition_fresh and distance>=-2:
             counts[state+' -> '+str(label)]+=1
+        autonomous_stop=(row.get('mode')==2 and distance>=-.2 and speed<.1
+            and not permits(state,movement) and visual_fresh and recognition_fresh)
         if previous:
             elapsed=now-previous['time']
-            if 0<=elapsed<=1 and distance>=-.2 and speed<.1 and not permits(state,movement) and visual_fresh:
+            if 0<=elapsed<=1 and autonomous_stop:
                 if previous['stopped_for_signal']:
                     stop_seconds+=elapsed
                     if previous['state']==state:stopped_by_phase[state]+=elapsed
@@ -73,7 +75,7 @@ def evaluate(rows, approach, movement, front_offset):
                     recognition_fresh=recognition_fresh,sample_interval_valid=0<elapsed<=1,
                     speed_mps=speed))
         previous=dict(time=now,distance=distance,state=state,
-            stopped_for_signal=(distance>=-.2 and speed<.1 and not permits(state,movement) and visual_fresh))
+            stopped_for_signal=autonomous_stop)
     legal=bool(crossings) and all(c['permission'] and c['visual_fresh'] and c['sample_interval_valid'] for c in crossings)
     return dict(movement=movement,samples=len(rows),phase_samples=dict(phases),
         classification_counts=dict(counts),crossings=crossings,stopped_on_nonpermissive_seconds=stop_seconds,
