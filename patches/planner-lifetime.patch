@@ -1,0 +1,19 @@
+diff --git a/planning/behavior_path_planner/autoware_behavior_path_planner/include/autoware/behavior_path_planner/planner_manager.hpp b/planning/behavior_path_planner/autoware_behavior_path_planner/include/autoware/behavior_path_planner/planner_manager.hpp
+--- a/planning/behavior_path_planner/autoware_behavior_path_planner/include/autoware/behavior_path_planner/planner_manager.hpp
++++ b/planning/behavior_path_planner/autoware_behavior_path_planner/include/autoware/behavior_path_planner/planner_manager.hpp
+@@ -369,6 +369,15 @@
+ public:
+   explicit PlannerManager(rclcpp::Node & node);
+ 
++  // Members are destroyed in reverse declaration order. The plugin loader is
++  // declared after both owner vectors, so its default destruction ran first.
++  // Release every scene/module owner while pluginlib is still alive.
++  ~PlannerManager()
++  {
++    planner_manager_slots_.clear();
++    manager_ptrs_.clear();
++  }
++
+   /**
+    * @brief run all candidate and approved modules.
+    * @param planner data.

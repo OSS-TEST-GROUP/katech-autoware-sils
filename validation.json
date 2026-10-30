@@ -1,13 +1,19 @@
 {
+  "as_of": "2026-10-30T07:19:14.612938+00:00",
   "passed": true,
-  "source_files": 73,
-  "git_payload_bytes": 255081,
-  "private_map_data_included": false,
-  "trained_model_count": 4,
+  "scope": "source checks, fresh downloads, asset installation and standalone CARLA asset smoke only",
+  "tests": {
+    "runtime": 38,
+    "classifier": 7,
+    "preparation": 30,
+    "map_selection": 22
+  },
+  "total_unit_tests": 97,
   "models": [
     {
       "file": "korean_tl_yolox_s_pilot_batch_1.onnx",
-      "cpu_smoke_passed": true,
+      "sha256": "4a66122cc8c364ecc356ff651ddff808f986b6bafa3a109edb126adb4867c962",
+      "passed": true,
       "input_shape": [
         1,
         3,
@@ -18,11 +24,13 @@
         1,
         3549,
         8
-      ]
+      ],
+      "synthetic_cases": 2
     },
     {
       "file": "korean_tl_yolox_s_pilot_batch_6.onnx",
-      "cpu_smoke_passed": true,
+      "sha256": "4197987260520c57d301a5fddefd63abfa037965f8de2e7cb8b8ea833a03334e",
+      "passed": true,
       "input_shape": [
         6,
         3,
@@ -33,11 +41,13 @@
         6,
         3549,
         8
-      ]
+      ],
+      "synthetic_cases": 2
     },
     {
       "file": "candidate_c_batch_1.onnx",
-      "cpu_smoke_passed": true,
+      "sha256": "47a3cf703e2bf0eb5a89a27ba928d89611897f7a63ad96ee8ade6270bdb3f30a",
+      "passed": true,
       "input_shape": [
         1,
         3,
@@ -47,11 +57,13 @@
       "output_shape": [
         1,
         6
-      ]
+      ],
+      "synthetic_cases": 2
     },
     {
       "file": "candidate_c_batch_6.onnx",
-      "cpu_smoke_passed": true,
+      "sha256": "987c0a8d868ce11917481da2b2bf785609b549db6d41aed7d2d64e7220bd13d2",
+      "passed": true,
       "input_shape": [
         6,
         3,
@@ -61,17 +73,32 @@
       "output_shape": [
         6,
         6
-      ]
+      ],
+      "synthetic_cases": 2
     }
   ],
-  "tests": {
-    "runtime": 38,
-    "classifier_contract": 7,
-    "preparation": 6,
-    "map_selection": 22
+  "private_map_data_included": false,
+  "fresh_download_hashes_verified": true,
+  "profile_ndt_pcd_selected": true,
+  "generated_private_bindings_match_reference": true,
+  "native_source_overlay_prepared": true,
+  "carla_asset_smoke": {
+    "passed": true,
+    "driving_test": false,
+    "port": 2480,
+    "existing_containers_unchanged": true,
+    "probe_source_sha256": "75cd6d81011a290368f169934b4e49eee335305c505634807ed03efd0f942afe",
+    "official_binary_sha256": "1da989e4ff136e0658fdea421bc1da2b0e5cb018c6e767efc4f6129c21ab1a81",
+    "client_exit": 0,
+    "test_server_stopped": true
   },
-  "pinned_base_commits_remote_verified": true,
-  "full_build_performed": false,
-  "simulation_modified": false,
-  "note": "Synthetic zero-input inference checks structure only, not recognition accuracy or road safety."
+  "full_sils_build_verified": false,
+  "runtime_integration_complete": false,
+  "autoware_driving_test_from_new_build": false,
+  "recognition_accuracy_test": false,
+  "other_pc_verified": false,
+  "existing_live_simulation_modified": false,
+  "final_manual_ready": false,
+  "source_files": 83,
+  "git_payload_bytes": 314262
 }

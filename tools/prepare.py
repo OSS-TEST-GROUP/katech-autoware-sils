@@ -40,7 +40,8 @@ def artifact(record,destination):
     temporary=Path(temp)
     try:
         size=0
-        with os.fdopen(fd,'wb') as out, urllib.request.urlopen(record['url'],timeout=60) as response:
+        request=urllib.request.Request(record['url'],headers={'User-Agent':'katech-autoware-sils/0.1'})
+        with os.fdopen(fd,'wb') as out, urllib.request.urlopen(request,timeout=60) as response:
             final=urllib.parse.urlsplit(response.geturl())
             if final.scheme!='https':raise ValueError('Refused insecure redirect')
             while block:=response.read(1024*1024):
@@ -108,7 +109,7 @@ def build_base(destination):
 
 def main():
     parser=argparse.ArgumentParser()
-    parser.add_argument('action',choices=['plan','fetch-models','fetch-carla','sources','build-base'])
+    parser.add_argument('action',choices=['plan','fetch-models','fetch-carla','sources','build-base','build-sils'])
     parser.add_argument('--destination',type=Path)
     args=parser.parse_args()
     if args.action=='plan':
@@ -119,6 +120,11 @@ def main():
     destination=args.destination.expanduser().resolve()
     if args.action=='sources':sources(destination)
     elif args.action=='build-base':build_base(destination)
+    elif args.action=='build-sils':
+        from overlay_sources import verify
+        verify(destination)
+        env=os.environ.copy();env['SKIP_SOURCE_UPDATE']='true'
+        run(['bash','partition/partition_build.sh','--repo','katech-autoware-sils','--platform','linux/amd64','--carla'],cwd=destination,env=env)
     elif args.action=='fetch-models':
         for row in load('models/manifest.json')['files']:print(artifact(row,destination))
     else:

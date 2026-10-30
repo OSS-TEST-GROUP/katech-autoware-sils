@@ -1,4 +1,5 @@
 import hashlib
+import io
 from pathlib import Path
 import tempfile
 import unittest
@@ -28,5 +29,14 @@ class PrepareTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d);(root/'real').write_bytes(b'abc');(root/'model.onnx').symlink_to(root/'real')
             with self.assertRaises(ValueError):prepare.artifact(self.row(),root)
+
+    def test_identified_public_client_without_credentials(self):
+        with tempfile.TemporaryDirectory() as d:
+            response=io.BytesIO(b'abc');response.geturl=lambda:'https://release-assets.githubusercontent.com/file'
+            with patch('urllib.request.urlopen',return_value=response) as opened:
+                prepare.artifact(self.row(),Path(d))
+                request=opened.call_args.args[0]
+                self.assertEqual(request.headers['User-agent'],'katech-autoware-sils/0.1')
+                self.assertNotIn('Authorization',request.headers)
 
 if __name__=='__main__':unittest.main()

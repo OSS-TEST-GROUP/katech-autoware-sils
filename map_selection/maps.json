@@ -39,7 +39,7 @@
       },
       "autoware": {
         "ready": false,
-        "reason": "비공개 실행 프로필 v1.0.7-profile.20261030 업로드 완료. 새 런처의 보충 파일 다운로드·NDT PCD 선택·실행 어댑터 연결은 아직 미완료입니다.",
+        "reason": "tools/private_assets.py와 install_assets.py의 다운로드·NDT PCD 선택 및 CARLA 자산 기동 확인 완료. 새 컨테이너 빌드·Autoware 실행 어댑터·통합 주행 검증은 아직 미완료입니다.",
         "map_paths": {
           "lanelet2": "autoware_map/lanelet2_map.osm",
           "pointcloud": "autoware_map/pointcloud_map.pcd",
