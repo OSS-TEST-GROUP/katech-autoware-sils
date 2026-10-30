@@ -1,0 +1,301 @@
+{
+  "schema": 1,
+  "files": [
+    {
+      "source": "ctrack_full_sim_v7/signal_scheduler.py",
+      "path": "reference_runtime/signal_scheduler.py",
+      "sha256": "b33ccbf284969e3a39676823beaf465924f4cdb5da9a09368f94ab5cc988a700"
+    },
+    {
+      "source": "ctrack_full_sim_v7/signal_detectors.py",
+      "path": "reference_runtime/signal_detectors.py",
+      "sha256": "b970e06d775a78e983b8b95fdc3b4d91fcb0c21b2b6b18131aaecadf46a455ab"
+    },
+    {
+      "source": "ctrack_full_sim_v7/signal_pool.py",
+      "path": "reference_runtime/signal_pool.py",
+      "sha256": "4478bcf51bd8200dc5709f4480c4b85bb75f61d997f7403392022f17db2cf2b5"
+    },
+    {
+      "source": "ctrack_full_sim_v7/simulation_lock.py",
+      "path": "reference_runtime/simulation_lock.py",
+      "sha256": "37957f9a0c67cba2ca77d28da344dddc6427b157bc8f9d75f9635b98005cd337"
+    },
+    {
+      "source": "ctrack_full_sim_v7/scene_lifecycle.py",
+      "path": "reference_runtime/scene_lifecycle.py",
+      "sha256": "769a2f5d3b9e0747ed822878729dcd3c2ed24a027e990b8b36a09eea9a568263"
+    },
+    {
+      "source": "ctrack_full_sim_v7/chase_camera.py",
+      "path": "reference_runtime/chase_camera.py",
+      "sha256": "514dfa695ce4ba5d0f0495e811b870e706de737cc5e586c793bcfad05ec22b2a"
+    },
+    {
+      "source": "ctrack_full_sim_v7/steering_geometry.py",
+      "path": "reference_runtime/steering_geometry.py",
+      "sha256": "389a537549e1445a32d2b28c20c373d4f8543f4bbef51e81f1b3fb16966befb8"
+    },
+    {
+      "source": "ctrack_full_sim_v7/bridge_synchronization.py",
+      "path": "reference_runtime/bridge_synchronization.py",
+      "sha256": "e136c827dafaa053e49a5d907b04a5f543aa77827c834bfcf096895dba86eceb"
+    },
+    {
+      "source": "ctrack_full_sim_v7/network_scene.py",
+      "path": "reference_runtime/network_scene.py",
+      "sha256": "0e2c2f858fe69f191664e9da3ecc7dc746aeaa6a1c78281d3a6695bf4c34400b"
+    },
+    {
+      "source": "ctrack_full_sim_v7/localization_guard.py",
+      "path": "reference_runtime/localization_guard.py",
+      "sha256": "ece1e9aa59e091c8631ebacbbdbc90743925a28dd8f26b678279c7ac8ecb76aa"
+    },
+    {
+      "source": "ctrack_full_sim_v7/partition.py",
+      "path": "reference_runtime/partition.py",
+      "sha256": "67a32b4d75c45cb555256161a2fb52f8dd0277a50313b9014c1c2ab53b450ca8"
+    },
+    {
+      "source": "ctrack_full_sim_v7/bootstrap.py",
+      "path": "reference_runtime/bootstrap.py",
+      "sha256": "e7d2fafd4a72841352c8b78d4a2b977fde0d66bf1605c7f8b6fab61fd9177167"
+    },
+    {
+      "source": "ctrack_full_sim_v7/launch_ros_v7.py",
+      "path": "reference_runtime/launch_ros_v7.py",
+      "sha256": "9b52b0ff7f41e44ffd639e28fd29718310210623ec60f7fa8b371b213d378a48"
+    },
+    {
+      "source": "ctrack_full_sim_v7/apply_speed_limit.py",
+      "path": "reference_runtime/apply_speed_limit.py",
+      "sha256": "59a39fb1a4a9e31cf4adc953705186d49d430cecf15ffd464938d2af9252e760"
+    },
+    {
+      "source": "ctrack_full_sim_v7/recover_decision_startup.py",
+      "path": "reference_runtime/recover_decision_startup.py",
+      "sha256": "9aa87f4070680db6c81af9b980aa1af4f4db343ca54e9b0efabbaba21a932b93"
+    },
+    {
+      "source": "ctrack_full_sim_v7/emergency_stop.py",
+      "path": "reference_runtime/emergency_stop.py",
+      "sha256": "86cfaf65db44cb6f8128e91fa8088873d483b7209351034cb5fef1eb4b471237"
+    },
+    {
+      "source": "ctrack_full_sim_v7/inspect_ros.py",
+      "path": "reference_runtime/inspect_ros.py",
+      "sha256": "95cba09da5a631e4554a8040a37d785f4a9532f161aba3246c8a5a61a3974dad"
+    },
+    {
+      "source": "ctrack_full_sim_v7/rotating_output27.py",
+      "path": "reference_runtime/rotating_output27.py",
+      "sha256": "239132c8e432d9b510231535e29d792ab0c4315eacddc639d5a45f5ae47b14f0"
+    },
+    {
+      "source": "ctrack_full_sim_v7/test_steering_geometry.py",
+      "path": "reference_runtime/test_steering_geometry.py",
+      "sha256": "45f1696ba39c9c8de64312ce8430b027c03464ec5e05ff3e3f20d84810ca4ebd"
+    },
+    {
+      "source": "ctrack_full_sim_v7/test_signal_pool.py",
+      "path": "reference_runtime/test_signal_pool.py",
+      "sha256": "c66cb4c669d30605bcc83414cbeb02b363fa2d0f0316a4c39e66d1d205ba4705"
+    },
+    {
+      "source": "ctrack_full_sim_v7/test_scene_lifecycle.py",
+      "path": "reference_runtime/test_scene_lifecycle.py",
+      "sha256": "5571f64da69ce78a800708c05b8c039286db089b9aab0437387f37c6cd40da05"
+    },
+    {
+      "source": "ctrack_full_sim_v7/test_signal_detectors.py",
+      "path": "reference_runtime/test_signal_detectors.py",
+      "sha256": "1c2519186094fa2b544422e00d4785f52e5a3b040d897f86be7e4f76df46cf2a"
+    },
+    {
+      "source": "ctrack_full_sim_v7/test_simulation_lock.py",
+      "path": "reference_runtime/test_simulation_lock.py",
+      "sha256": "220b29462b61507fef8a767101991aabcaa181fd357056567be65733368fc139"
+    },
+    {
+      "source": "ctrack_full_sim_v7/test_bridge_synchronization.py",
+      "path": "reference_runtime/test_bridge_synchronization.py",
+      "sha256": "17f3994adcd16a760f06eaa3673a34f6c22589f40a3a361226dec3fbc78ec274"
+    },
+    {
+      "source": "ctrack_full_sim_v7/test_signal_scheduler.py",
+      "path": "reference_runtime/test_signal_scheduler.py",
+      "sha256": "c8bc9523ac59f25a9d31e4807e2f3aa3e984f515c05df19e75bb5e77a77150c6"
+    },
+    {
+      "source": "ctrack_full_sim_v7/test_chase_camera.py",
+      "path": "reference_runtime/test_chase_camera.py",
+      "sha256": "9f2033478c8a96fc436001c03a3b5fdfd515f7176e560768b52107427b7555e0"
+    },
+    {
+      "source": "ctrack_full_sim_v7/stop_distance_guard.cpp",
+      "path": "reference_runtime/planning/stop_distance_guard.cpp",
+      "sha256": "e88bd90ea74b3da372d9d1a792ea01ad680188981ea63f0b9dbbdc808566be0f"
+    },
+    {
+      "source": "ctrack_full_sim_v7/test_stop_distance_guard.cpp",
+      "path": "reference_runtime/planning/test_stop_distance_guard.cpp",
+      "sha256": "64612827eb0435c9b59df657ba62adfd82300cac0f65334e44703d2e283a23b9"
+    },
+    {
+      "source": "ctrack_full_sim_v7/test_stop_guard_local_main.cpp",
+      "path": "reference_runtime/planning/test_stop_guard_local_main.cpp",
+      "sha256": "7bdd1a3335a5fcc4744abc0271573cdb641a3d9898ba07fbf904567117d306b1"
+    },
+    {
+      "source": "ctrack_full_sim_v7/test_stop_guard_local_plugin.cpp",
+      "path": "reference_runtime/planning/test_stop_guard_local_plugin.cpp",
+      "sha256": "01909eeb2e89d5b2422ef3f7399667c02b8ab2b36e2666fa3750aba599294431"
+    },
+    {
+      "source": "ctrack_full_sim_v7/protected_turn_policy.hpp",
+      "path": "reference_runtime/planning/protected_turn_policy.hpp",
+      "sha256": "cd96b9c5ad926cf9681269d76e430414350231945f6defbc25a81c92fa2d9667"
+    },
+    {
+      "source": "ctrack_full_sim_v7/protected_turn_policy_test.cpp",
+      "path": "reference_runtime/planning/protected_turn_policy_test.cpp",
+      "sha256": "59c577dbae6b4c77b4c506bf32765ac08ffde6ac53d860700c81d2b05fad4248"
+    },
+    {
+      "source": "kcity_carla_v1/step05v/plugin_lifetime.c",
+      "path": "reference_runtime/planning/plugin_lifetime.c",
+      "sha256": "5b16582121f02ebc5f40695be44a3d891037831ac8b68ee853cc7f84a89ab333"
+    },
+    {
+      "source": "ctrack_full_sim_v7/release30_tooling/portable_storage.py",
+      "path": "reference_runtime/runtime_storage27.py",
+      "sha256": "ac6c2cb21fd0690a2d1b28d4b807e20275d0fc4d04e904de31f8f55a853b31b3"
+    },
+    {
+      "source": "raid_work/ctrack_full_sim_v7/overlay/carla_ros.py",
+      "path": "reference_runtime/overlay/carla_ros.py",
+      "sha256": "48b00753cdd27ae1d85f1eebf34bb4c6394596aa3f1c730f0f6baf98c9475585"
+    },
+    {
+      "source": "raid_work/ctrack_full_sim_v7/overlay/carla_autoware.py",
+      "path": "reference_runtime/overlay/carla_autoware.py",
+      "sha256": "1f7bfd0e72316cb72d8b2f1064b77db4aae216f642b235cfecacb6e154a2c36f"
+    },
+    {
+      "source": "raid_work/ctrack_full_sim_v7/overlay/recognition_node.py",
+      "path": "reference_runtime/overlay/recognition_node.py",
+      "sha256": "831c44d0506870888f89cfa4738f44139e62af6cd446ad0fbc8abcbe8d89bc49"
+    },
+    {
+      "source": "ctrack_perception_v2/guarded_pipeline.py",
+      "path": "ctrack_perception_v2/guarded_pipeline.py",
+      "sha256": "2178b310e7004b8891df89e440dc6049dac23ee489dee92e186f79fb38ba94fa"
+    },
+    {
+      "source": "ctrack_perception_v2/projector.py",
+      "path": "ctrack_perception_v2/projector.py",
+      "sha256": "79e31827c473cd7f7009bf5f9977c1329044a6e664b062b860e5ab9aa7af0460"
+    },
+    {
+      "source": "aihub188_mobilenetv2/candidate_c/adapter_core.py",
+      "path": "aihub188_mobilenetv2/candidate_c/adapter_core.py",
+      "sha256": "dd92e80940c4a18fb619c59601442b34d09efd88f66d86860f2f024bd6e9e08c"
+    },
+    {
+      "source": "aihub188_mobilenetv2/candidate_c/trt_backend.py",
+      "path": "aihub188_mobilenetv2/candidate_c/trt_backend.py",
+      "sha256": "9fe1486b62b85c4a48215640be3dd7ca1acc08384d8966b54a04a2815d468b13"
+    },
+    {
+      "source": "aihub188_mobilenetv2/candidate_c/test_contract.py",
+      "path": "aihub188_mobilenetv2/candidate_c/test_contract.py",
+      "sha256": "45dcdded4d921d60fb47d621ec8be72b6436ea84dda3fac33049846cb53579dd"
+    },
+    {
+      "source": "aihub188_mobilenetv2/carla_town_c/trained_contract.py",
+      "path": "aihub188_mobilenetv2/carla_town_c/trained_contract.py",
+      "sha256": "30f6dfea8149da7f7d6956c8123c5e3ecf79622b6fb07c3bb0fca73d58bc701b"
+    },
+    {
+      "source": "aihub188_mobilenetv2/archive_roi_dataset.py",
+      "path": "aihub188_mobilenetv2/archive_roi_dataset.py",
+      "sha256": "ac1fdcdd4dba39942c3f0c71161322a3b3c921dc0a01d44ebc43fc484abd8b5e"
+    },
+    {
+      "source": "ctrack_integration_v1/signals.py",
+      "path": "reference_runtime/signals.py",
+      "sha256": "0d3fb14ea78ec91d271f9b075469136f3f34450b898ed6c4d96fbf65d8c49142"
+    },
+    {
+      "source": "raid_work/ctrack_full_sim_v7/redleft_v2/src/autoware_behavior_velocity_traffic_light_module/src/scene.cpp",
+      "path": "reference_runtime/planning/traffic_light_module/scene.cpp",
+      "sha256": "74982c80d590f758d93b8184257999a21373d3bfddb6845d04ab8b0747403d7e"
+    },
+    {
+      "source": "raid_work/ctrack_full_sim_v7/redleft_v2/src/autoware_behavior_velocity_traffic_light_module/src/scene.hpp",
+      "path": "reference_runtime/planning/traffic_light_module/scene.hpp",
+      "sha256": "0bcc28e4f957df00bf2e3ebcc0b292dc876b476f180a770dfb9c426b8d50f2b5"
+    },
+    {
+      "source": "raid_work/ctrack_full_sim_v7/redleft_v2/src/autoware_behavior_velocity_traffic_light_module/src/utils.cpp",
+      "path": "reference_runtime/planning/traffic_light_module/utils.cpp",
+      "sha256": "5be510786c0fd13009d9f63a37efa5f307db621d1b6effe383e69ca8fea23d74"
+    },
+    {
+      "source": "raid_work/ctrack_full_sim_v7/redleft_v2/src/autoware_behavior_velocity_traffic_light_module/src/utils.hpp",
+      "path": "reference_runtime/planning/traffic_light_module/utils.hpp",
+      "sha256": "32aea20d46c725083214eceafd0e48a0d3e0c9a3887d935c06ee98f4657bd4c1"
+    },
+    {
+      "source": "raid_work/ctrack_full_sim_v7/redleft_v2/src/autoware_behavior_velocity_traffic_light_module/src/manager.cpp",
+      "path": "reference_runtime/planning/traffic_light_module/manager.cpp",
+      "sha256": "15d5dd5852424860e5e9654cdc53af1b8a90c534f809f003b269b67a4f3da745"
+    },
+    {
+      "source": "raid_work/ctrack_full_sim_v7/redleft_v2/src/autoware_behavior_velocity_traffic_light_module/src/manager.hpp",
+      "path": "reference_runtime/planning/traffic_light_module/manager.hpp",
+      "sha256": "90c8bdc064cef48f644147e361e7052747a9bd7bd09992d2b8db1b4cdd0a8064"
+    },
+    {
+      "source": "raid_work/ctrack_full_sim_v7/redleft_v2/src/autoware_behavior_velocity_traffic_light_module/src/debug.cpp",
+      "path": "reference_runtime/planning/traffic_light_module/debug.cpp",
+      "sha256": "ff579b0124b0e23ffedfc122d2b794e7395a84dfd9ef6052bcb655307bd39f56"
+    },
+    {
+      "source": "raid_work/ctrack_full_sim_v7/redleft_v2/src/autoware_behavior_velocity_traffic_light_module/package.xml",
+      "path": "reference_runtime/planning/traffic_light_module/package.xml",
+      "sha256": "91459541cebb039194ebb109cf988cbbd269f3b0365a896cdb1ee50fc437ea43"
+    },
+    {
+      "source": "raid_work/ctrack_full_sim_v7/redleft_v2/src/autoware_behavior_velocity_traffic_light_module/CMakeLists.txt",
+      "path": "reference_runtime/planning/traffic_light_module/CMakeLists.txt",
+      "sha256": "9b1c17d22fd80cc6a44e9d9098e4743a848bd39422dcc53ea5ff91a5f6456fec"
+    },
+    {
+      "source": "raid_work/ctrack_full_sim_v7/redleft_v2/src/autoware_behavior_velocity_traffic_light_module/plugins.xml",
+      "path": "reference_runtime/planning/traffic_light_module/plugins.xml",
+      "sha256": "053929962d26785535130bb62a7a70c88d9a48eb889fbcaa850f62465e20ed5c"
+    },
+    {
+      "source": "sils_map_launcher_v1/mapctl.py",
+      "path": "map_selection/mapctl.py",
+      "sha256": "45943303dcfa364284db879ce304371e39310b94117ec4eba2843297baf69ca0"
+    },
+    {
+      "source": "sils_map_launcher_v1/maps.json",
+      "path": "map_selection/maps.json",
+      "sha256": "866976e8eaa7b14d96f58057e8a877a5dd3232308099fe280f0dcf9bf0675653"
+    },
+    {
+      "source": "sils_map_launcher_v1/private-sources.example.json",
+      "path": "map_selection/private-sources.example.json",
+      "sha256": "1a840e187e51e43624407cf1fa54d6eb5a8e5a2f05eb00b371fdece41ba2a422"
+    },
+    {
+      "source": "sils_map_launcher_v1/test_mapctl.py",
+      "path": "map_selection/test_mapctl.py",
+      "sha256": "b17a00b985a99e48a266b4c2febb7a6e0052ccaf404fa44181bf0134ccbe7b92"
+    }
+  ],
+  "scope": "Allowlisted source snapshot; no map geometry or runtime profile data"
+}

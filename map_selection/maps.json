@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "carla_version": "0.9.15",
+  "maps": [
+    {
+      "id": "town01",
+      "label": "CARLA Town01",
+      "version": "0.9.15",
+      "carla_map": "/Game/Carla/Maps/Town01",
+      "distribution": "official_carla",
+      "artifact": null,
+      "autoware": {
+        "ready": false,
+        "reason": "Town01에 대응하는 Lanelet2·위치추정·차량 시작 설정을 아직 등록하지 않았습니다."
+      }
+    },
+    {
+      "id": "town10hd",
+      "label": "CARLA Town10HD Opt",
+      "version": "0.9.15",
+      "carla_map": "/Game/Carla/Maps/Town10HD_Opt",
+      "distribution": "official_carla",
+      "artifact": null,
+      "autoware": {
+        "ready": false,
+        "reason": "Town10HD에 대응하는 Lanelet2·위치추정·차량 시작 설정을 아직 등록하지 않았습니다."
+      }
+    },
+    {
+      "id": "ctrack",
+      "label": "C-Track 1_0_7 (비공개)",
+      "version": "1_0_7-assets-candidate-20261030",
+      "carla_map": "/Game/map_package/Maps/C_track_1_0_7/C_track_1_0_7",
+      "distribution": "private_github_release",
+      "artifact": {
+        "file": "ctrack-1_0_7-private-assets-candidate.tar.zst",
+        "bytes": 1582308938,
+        "sha256": "77243991f415b9d0ae6232f43e12d0d30d640ea166e68ba461e91a420f3828f7"
+      },
+      "autoware": {
+        "ready": false,
+        "reason": "비공개 실행 프로필 v1.0.7-profile.20261030 업로드 완료. 새 런처의 보충 파일 다운로드·NDT PCD 선택·실행 어댑터 연결은 아직 미완료입니다.",
+        "map_paths": {
+          "lanelet2": "autoware_map/lanelet2_map.osm",
+          "pointcloud": "autoware_map/pointcloud_map.pcd",
+          "projector": "autoware_map/map_projector_info.yaml"
+        },
+        "required_private_configs": [
+          "sils_map_config/placements.json",
+          "sils_map_config/plan.json",
+          "sils_map_config/signal_map.json",
+          "sils_map_config/start.json",
+          "sils_map_config/localization.json",
+          "sils_map_config/coordinates.json",
+          "sils_map_config/runtime-contract.json"
+        ],
+        "runtime_profile_reference": {
+          "repository": "OSS-TEST-GROUP/katech-C-Track-Carla-map",
+          "release_tag": "v1.0.7-profile.20261030",
+          "artifact": {
+            "file": "ctrack-1_0_7-runtime-profile-candidate.tar.gz",
+            "bytes": 37649725,
+            "sha256": "d7c65e478aab1cf4d4624774710a9664a8b18215a3ae3f01808d9d4230abd6f8"
+          },
+          "selected_ndt_pcd": "sils_map_config/ndt/pointcloud_map.pcd",
+          "automatic_fetch_and_activation_implemented": false,
+          "note": "map_paths는 기본 자산 목록입니다. 실행 시 기본 pointcloud 대신 보충 프로필의 selected_ndt_pcd를 사용해야 합니다."
+        }
+      }
+    }
+  ]
+}

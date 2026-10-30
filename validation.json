@@ -1,0 +1,77 @@
+{
+  "passed": true,
+  "source_files": 73,
+  "git_payload_bytes": 255081,
+  "private_map_data_included": false,
+  "trained_model_count": 4,
+  "models": [
+    {
+      "file": "korean_tl_yolox_s_pilot_batch_1.onnx",
+      "cpu_smoke_passed": true,
+      "input_shape": [
+        1,
+        3,
+        416,
+        416
+      ],
+      "output_shape": [
+        1,
+        3549,
+        8
+      ]
+    },
+    {
+      "file": "korean_tl_yolox_s_pilot_batch_6.onnx",
+      "cpu_smoke_passed": true,
+      "input_shape": [
+        6,
+        3,
+        416,
+        416
+      ],
+      "output_shape": [
+        6,
+        3549,
+        8
+      ]
+    },
+    {
+      "file": "candidate_c_batch_1.onnx",
+      "cpu_smoke_passed": true,
+      "input_shape": [
+        1,
+        3,
+        20,
+        70
+      ],
+      "output_shape": [
+        1,
+        6
+      ]
+    },
+    {
+      "file": "candidate_c_batch_6.onnx",
+      "cpu_smoke_passed": true,
+      "input_shape": [
+        6,
+        3,
+        20,
+        70
+      ],
+      "output_shape": [
+        6,
+        6
+      ]
+    }
+  ],
+  "tests": {
+    "runtime": 38,
+    "classifier_contract": 7,
+    "preparation": 6,
+    "map_selection": 22
+  },
+  "pinned_base_commits_remote_verified": true,
+  "full_build_performed": false,
+  "simulation_modified": false,
+  "note": "Synthetic zero-input inference checks structure only, not recognition accuracy or road safety."
+}

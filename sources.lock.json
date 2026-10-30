@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "autoware": {
+    "url": "https://github.com/OSS-TEST-GROUP/katech-autoware.git",
+    "commit": "3033d4a5bd50018fcc20545e0d8d73835e4f001d"
+  },
+  "import_manifest": "autoware.repos",
+  "repositories": 32,
+  "local_calibration_patch": {
+    "repository": "param/autoware_individual_params",
+    "file": "patches/individual-params-carla.patch",
+    "sha256": "2eb079ecccfc743a93835afe2f4f629ae416f4ae419c2ef238c31cf637911015"
+  },
+  "unpublished_legacy_tflite_adapter_commits_not_selected": true,
+  "full_sils_build_verified": false,
+  "existing_installation_modified": false
+}

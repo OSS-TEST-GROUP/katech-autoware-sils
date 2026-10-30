@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "version": "0.9.15",
+  "platform": "linux/amd64",
+  "default_mode": "official_binary",
+  "url": "https://downloads.carlasim.com/Linux/CARLA_0.9.15.tar.gz",
+  "bytes": 8386636048,
+  "sha256": "7b2f432ce74b251593f95dcc8dee6d99ad9625c2a71a2d6d48f24d879de19ef7",
+  "publisher_sha256_available": false,
+  "optional_source": {
+    "url": "https://github.com/carla-simulator/carla.git",
+    "tag": "0.9.15",
+    "requires_unreal_access": true,
+    "automated_source_build_implemented": false
+  }
+}
