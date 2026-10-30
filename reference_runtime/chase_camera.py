@@ -45,10 +45,11 @@ class ChaseFilter:
 
 class SmoothChaseCamera:
     def __init__(self, ego_id, port=2400, hz=30.0,
-                 report='/results/reports/chase_camera.json'):
+                 report='/results/reports/chase_camera.json',host='127.0.0.1'):
         if hz <= 0:
             raise ValueError('hz must be positive')
         self.ego_id, self.port, self.hz = ego_id, port, hz
+        self.host = host
         self.report = Path(report)
         self.stopping = threading.Event()
         self.thread = threading.Thread(target=self._run, name='spectator-camera', daemon=True)
@@ -73,7 +74,7 @@ class SmoothChaseCamera:
         while not self.stopping.is_set():
             try:
                 # A separate client keeps spectator RPCs off the signal loop.
-                client = carla.Client('127.0.0.1', self.port)
+                client = carla.Client(self.host, self.port)
                 client.set_timeout(1.0)
                 world = client.get_world()
                 spectator = world.get_spectator()

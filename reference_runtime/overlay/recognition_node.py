@@ -106,7 +106,9 @@ class Recognition(Node):
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--enable-test',action='store_true');parser.add_argument('--map',default='/experiment/config/signal_map.json');parser.add_argument('--model',default='/work/yolox_training_v1/scale_02/export/korean_tl_yolox_s_pilot_batch_1.onnx');parser.add_argument('--engine',default='/artifacts/mobilenetv2_batch_6_fp32.engine');parser.add_argument('--timeout',type=float,default=1.)
     args,ros=parser.parse_known_args()
-    assert args.enable_test and os.environ.get('ROS_DOMAIN_ID')=='222','Opt-in isolated DDS domain 222 is required'
+    from runtime_config import load
+    load()
+    assert args.enable_test,'Explicit isolated simulation opt-in is required'
     assert .1<=args.timeout<=5
     rclpy.init(args=ros);node=None
     try:node=Recognition(args);rclpy.spin(node)

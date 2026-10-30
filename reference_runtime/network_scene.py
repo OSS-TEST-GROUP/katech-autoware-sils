@@ -12,6 +12,7 @@ from simulation_lock import scene_transaction
 from chase_camera import SmoothChaseCamera
 from signal_pool import PooledSignals
 from scene_lifecycle import wait_scene_tick
+from runtime_config import load
 
 ROOT=Path('/results'); DIR=ROOT/'signal_network_v1'
 running=True
@@ -75,7 +76,8 @@ def main():
     assert len(ids)==11 and len(set(ids))==11
     assert set(ids)=={i for j in plan['junctions'] for a in j['approaches'] for i in a['signal_ids']}
     assert set(ids)=={str(s['regulatory_id']) for s in recognition['signals']}
-    c=carla.Client('127.0.0.1',2400);c.set_timeout(10)
+    settings=load()
+    c=carla.Client(settings['carla_host'],settings['carla_port']);c.set_timeout(10)
     deadline=time.monotonic()+150;ego=None
     while running and time.monotonic()<deadline:
         world=c.get_world()
@@ -87,7 +89,7 @@ def main():
     owned=[a for a in world.get_actors().filter('static.prop.mesh') if a.attributes.get('role_name','').startswith(('kr_signal_','kr_support_'))]
     assert not owned,'Old signal scene still owns actors; refuse duplicate controllers'
     scene=NetworkScene(world,placements);fault=False
-    camera=SmoothChaseCamera(ego.id)
+    camera=SmoothChaseCamera(ego.id,port=settings['carla_port'],host=settings['carla_host'])
     events=(DIR/('events_'+str(time.time_ns())+'.jsonl')).open('w',buffering=1)
     try:
         scene.deploy()

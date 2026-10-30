@@ -12,7 +12,8 @@ from nav_msgs.msg import Odometry
 from rosgraph_msgs.msg import Clock
 from autoware_adapi_v1_msgs.srv import ChangeOperationMode
 
-assert os.environ.get('ROS_DOMAIN_ID')=='222'
+from runtime_config import load
+load()  # Refuse an uninitialized or mismatched ROS session.
 rclpy.init();node=rclpy.create_node('ctrack_localization_guard')
 received={};stamps={};finite={};latest={};start=time.monotonic();last_request=0.;pending=None;fault=None;healthy_since=None
 folder=Path('/results/ndt_integration_v1');events=(folder/'guard_events.jsonl').open('a',buffering=1)

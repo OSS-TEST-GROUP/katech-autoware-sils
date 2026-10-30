@@ -1,14 +1,14 @@
 {
-  "as_of": "2026-10-30T09:54:10.706736+00:00",
+  "as_of": "2026-10-30T11:05:49.244427+00:00",
   "passed": true,
-  "scope": "source checks, fresh downloads, standalone CARLA assets, native builds and synthetic GPU numerical parity; NOT integrated driving",
+  "scope": "Fresh builds/assets, GPU parity, stopped startup, 8m native smoke and 40.6m native straight ARRIVED; full integration/portable launcher qualification remains incomplete",
   "tests": {
-    "runtime": 38,
+    "runtime": 58,
     "classifier": 7,
-    "preparation": 30,
+    "preparation": 44,
     "map_selection": 22
   },
-  "total_unit_tests": 97,
+  "total_unit_tests": 131,
   "models": [
     {
       "file": "korean_tl_yolox_s_pilot_batch_1.onnx",
@@ -149,11 +149,73 @@
       }
     ]
   },
-  "autoware_driving_test_from_new_build": false,
+  "autoware_driving_test_from_new_build": true,
   "recognition_accuracy_test": false,
   "other_pc_verified": false,
   "existing_live_simulation_modified": false,
   "final_manual_ready": false,
-  "source_files": 87,
-  "git_payload_bytes": 332900
+  "fresh_stopped_runtime_check": {
+    "passed": true,
+    "route_requested_while_stopped": true,
+    "native_stop_acknowledged": true,
+    "owned_server_stopped": true,
+    "topic_counts": {
+      "/clock": 159,
+      "/api/operation_mode/state": 1,
+      "/localization/pose_estimator/pose_with_covariance": 73,
+      "/planning/mission_planning/route": 1,
+      "/perception/object_recognition/objects": 72,
+      "/localization/initialization_state": 1,
+      "/control/command/actuation_cmd": 158,
+      "/control/command/control_cmd": 158,
+      "/localization/kinematic_state": 158,
+      "/planning/scenario_planning/trajectory": 79,
+      "/sensing/gnss/pose_with_covariance": 63,
+      "/perception/occupancy_grid_map/map": 73,
+      "/perception/traffic_light_recognition/traffic_signals": 18,
+      "/ctrack/recognition/diagnostics": 18
+    },
+    "trajectory": {
+      "points": 133,
+      "max_velocity": 2.9088211059570312
+    },
+    "driving_test": false,
+    "signal_classification_accuracy_verified": false,
+    "note": "Stationary NDT and message flow only; starting view had no projectable traffic-light heads. ROI projection retains simulator GT pose."
+  },
+  "fresh_bounded_native_driving": {
+    "passed": true,
+    "cap_kmh": 5,
+    "distance_m": 8.15709128808872,
+    "max_estimated_speed_mps": 1.3080987752249253,
+    "max_physical_speed_mps": 1.3402236700057983,
+    "max_ekf_gt_xy_m": 0.15601413118304994,
+    "collision_events": 0,
+    "physical_stop_confirmed": true,
+    "shutdown_passed": true,
+    "full_route_verified": false,
+    "lane_boundary_qualification": false,
+    "signal_stop_restart_verified": false
+  },
+  "fresh_straight_route": {
+    "passed": true,
+    "render_quality": "Epic",
+    "native_arrived": true,
+    "distance_m": 40.596099223365385,
+    "max_ekf_gt_xy_m": 0.16353429874617154,
+    "max_physical_speed_mps": 1.4297759532928467,
+    "collision_events": 0,
+    "shutdown_passed": true,
+    "signal_transition_time_qualification": false,
+    "lane_boundary_qualification": false
+  },
+  "resolved_runtime_defects": [
+    {
+      "symptom": "Low renderer: detected signal housing but no_visible_lamp_evidence; native vehicle stayed stopped until trial deadline",
+      "correction": "Epic rendering restores camera lamp colors; identical straight route then reached native ARRIVED",
+      "model_or_safety_thresholds_relaxed": false
+    }
+  ],
+  "source_files": 100,
+  "git_payload_bytes": 371222
 }

@@ -9,7 +9,7 @@ from rosidl_runtime_py.set_message import set_message_fields
 p=argparse.ArgumentParser();p.add_argument('action',choices=['health','init','goal','local-stop','start','stop']);p.add_argument('--seconds',type=float,default=12);a=p.parse_args()
 rclpy.init();n=rclpy.create_node('ctrack_v7_check');n.set_parameters([rclpy.Parameter('use_sim_time',value=True)])
 latest={};counts={};subs=[]
-topics=['/clock','/sensing/gnss/pose_with_covariance','/localization/kinematic_state','/perception/object_recognition/objects','/perception/occupancy_grid_map/map','/perception/traffic_light_recognition/traffic_signals','/ctrack/recognition/diagnostics','/planning/mission_planning/route','/planning/scenario_planning/trajectory','/control/command/control_cmd','/control/command/actuation_cmd','/api/operation_mode/state','/localization/initialization_state']
+topics=['/clock','/sensing/gnss/pose_with_covariance','/localization/kinematic_state','/localization/pose_estimator/pose_with_covariance','/perception/object_recognition/objects','/perception/occupancy_grid_map/map','/perception/traffic_light_recognition/traffic_signals','/ctrack/recognition/diagnostics','/planning/mission_planning/route','/planning/scenario_planning/trajectory','/control/command/control_cmd','/control/command/actuation_cmd','/api/operation_mode/state','/localization/initialization_state']
 def receive(topic,msg):
     latest[topic]=msg;counts[topic]=counts.get(topic,0)+1
 deadline=time.monotonic()+a.seconds

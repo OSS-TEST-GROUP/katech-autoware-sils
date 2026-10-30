@@ -3,6 +3,8 @@ import os, sys, json, subprocess, time, signal
 from pathlib import Path
 from rotating_output27 import start_logged
 from runtime_storage27 import guard_health
+from runtime_config import load
+settings=load()
 kind=sys.argv[1]
 os.environ['CTRACK_PARTITION']=kind
 common=['map_path:=/autoware_map','data_path:=/autoware_data','vehicle_model:=sample_vehicle','sensor_model:=carla_sensor_kit','use_sim_time:=true','is_simulation:=true','pointcloud_container_name:=pointcloud_container_'+kind,'glog_name:=glog_'+kind]
@@ -25,9 +27,9 @@ def stop(*_,exit_code=0):
 signal.signal(signal.SIGTERM,stop);signal.signal(signal.SIGINT,stop)
 if kind=='perception':
     pose=json.loads(Path('/results/config/start.json').read_text())['spawn']
-    start('bridge',['ros2','launch','autoware_carla_interface','autoware_carla_interface.launch.xml','host:=127.0.0.1','port:=2400','timeout:=60','carla_map:=/Game/map_package/Maps/C_track_1_0_7/C_track_1_0_7','vehicle_type:=vehicle.tesla.model3','spawn_point:='+pose,'use_traffic_manager:=false','objects_definition_file:=/results/config/objects.json','input_initial_pose:=/initialpose3d','output_imu_topic:=/sensing/imu/imu_data','output_camera_image_topic:=/sensing/camera/camera6/image_raw','output_camera_info_topic:=/sensing/camera/camera6/camera_info','publish_ground_truth_traffic_lights:=false'])
-    start('perception',['ros2','launch','obigo_launch','adsw_perception.launch.xml',*common,'launch_sensing_driver:=false','launch_system_monitor:=false','launch_dummy_diag_publisher:=true','rviz:=true','rviz_respawn:=false','lidar_detection_model:=centerpoint','localization_pose_source:=carla','localization_twist_source:=carla','localization_gnss_enabled:=false','use_carla_ground_truth_localization:=true','all_traffic_light_camera:=[camera6]'])
-    start('recognition',['python3','/results/overlay/recognition_node.py','--enable-test','--map','/results/config/signal_map.json','--ros-args','-p','use_sim_time:=true'])
+    start('bridge',['ros2','launch','autoware_carla_interface','autoware_carla_interface.launch.xml','host:='+settings['carla_host'],'port:='+str(settings['carla_port']),'timeout:=60','carla_map:='+settings['carla_map'],'vehicle_type:=vehicle.tesla.model3','spawn_point:='+pose,'use_traffic_manager:=false','objects_definition_file:=/results/config/objects.json','input_initial_pose:=/initialpose3d','output_imu_topic:=/sensing/imu/imu_data','output_camera_image_topic:=/sensing/camera/camera6/image_raw','output_camera_info_topic:=/sensing/camera/camera6/camera_info','publish_ground_truth_traffic_lights:=false'])
+    start('perception',['ros2','launch','obigo_launch','adsw_perception.launch.xml',*common,'launch_sensing_driver:=false','launch_system_monitor:=false','launch_dummy_diag_publisher:=true','rviz:='+str(not settings['headless']).lower(),'rviz_respawn:=false','lidar_detection_model:=centerpoint','localization_pose_source:=carla','localization_twist_source:=carla','localization_gnss_enabled:=false','use_carla_ground_truth_localization:=true','all_traffic_light_camera:=[camera6]'])
+    start('recognition',['python3','/code/overlay/recognition_node.py','--enable-test','--map','/results/config/signal_map.json','--model','/models/korean_tl_yolox_s_pilot_batch_1.onnx','--engine','/engines/classifier/mobilenetv2_batch_6_fp32.engine','--ros-args','-p','use_sim_time:=true'])
     scene_script='network_scene.py' if Path('/results/config/signal_network_active.json').exists() else 'scene.py'
     start('scene',['python3','/code/'+scene_script])
 elif kind=='decision':
@@ -44,7 +46,10 @@ while True:
         exited=[{'pid':p.pid,'returncode':p.poll()} for p in procs if p.poll() is not None]
         record={'partition':kind,'wall_time':time.time(),'exited':exited,'storage_fault':storage_fault}
         fault=Path('/results/reports')/(kind+'_fault.json')
-        if not fault.exists():fault.write_text(json.dumps(record,indent=2))
+        try:
+            if not fault.exists():fault.write_text(json.dumps(record,indent=2))
+        except OSError as exc:
+            print('Cannot record fault; STOP still required:',exc,flush=True)
         print('Child exited; shutting down this partition',exited,flush=True)
         try:subprocess.run([sys.executable,'/code/emergency_stop.py'],timeout=8,check=True)
         except Exception as e:print('STOP request failed:',str(e),flush=True)

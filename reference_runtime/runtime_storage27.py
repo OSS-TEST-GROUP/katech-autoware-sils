@@ -97,6 +97,8 @@ def guard_health():
     try:
         if (base/'guard_fault.json').exists():return 'runtime_storage_fault'
         state=json.loads((base/'guard.json').read_text())
+        if cfg.get('installation_id') and state.get('installation_id')!=cfg['installation_id']:
+            return 'runtime_storage_watchdog_identity_mismatch'
         age=time.time()-state['wall_time']
         if age < -2 or age > 15:return 'runtime_storage_watchdog_stale'
     except (OSError,ValueError,KeyError):return 'runtime_storage_watchdog_unavailable'
