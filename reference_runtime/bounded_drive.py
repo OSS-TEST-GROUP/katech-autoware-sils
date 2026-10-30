@@ -26,7 +26,9 @@ from trial_checks import cap_confirmed, motion_problem
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--full-route',action='store_true',help='Wait for native ARRIVED instead of 8 m, maximum 300 seconds')
+    parser.add_argument('--wait-for-phase',choices=['redleft','green'],help='Test orchestration only: wait in STOP for matching visual and camera-classified phase')
     args=parser.parse_args()
+    if args.wait_for_phase and not args.full_route:raise ValueError('Phase wait requires explicit route trial')
     config = load()
     rclpy.init()
     node = rclpy.create_node('fresh_install_bounded_drive')
@@ -86,6 +88,19 @@ def main():
             if ('limit' in latest and cap_confirmed(latest['limit'].max_velocity,
                 (p.longitudinal_velocity_mps for p in points))):break
         else:raise RuntimeError('5 km/h cap not confirmed in trajectory and selected limit')
+        if args.wait_for_phase:
+            signal_id=str(json.loads(Path('/results/config/private_trial.json').read_text())['signal_id'])
+            deadline=time.monotonic()+180
+            while time.monotonic()<deadline:
+                spin(.1);fresh()
+                if latest['mode'].mode!=1:raise RuntimeError('Phase wait must remain in STOP')
+                visual=json.loads(Path('/results/signal_network_v1/live_state.json').read_text())
+                results=json.loads(latest['recognition'].data)['results']
+                predictions=[r['prediction'].get('label') for r in results if str(r['regulatory_id'])==signal_id]
+                if (0<=time.time()-visual['wall_time']<1.5 and visual['states'].get(signal_id)==args.wait_for_phase
+                    and predictions==[args.wait_for_phase]):
+                    report['engagement_phase']=args.wait_for_phase;break
+            else:raise RuntimeError('Requested phase not observed with matching camera classification')
         mode('enable_autoware_control');mode('change_to_autonomous');report['engaged']=True
         start=time.monotonic();last=None;distance=0.;transition_deadline=start+10
         while time.monotonic()-start<(300 if args.full_route else 120):

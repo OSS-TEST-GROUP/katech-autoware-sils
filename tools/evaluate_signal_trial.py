@@ -42,7 +42,7 @@ def evaluate(rows, approach, movement, front_offset):
     ids=approach['signal_ids']
     if len(ids)!=1:raise ValueError('Single-head evaluation only')
     ident=str(ids[0]);hx,hy=approach['heading'];sx,sy,*_=approach['stop_ros']
-    counts=collections.Counter();phases=collections.Counter();crossings=[];stop_seconds=0.;previous=None
+    counts=collections.Counter();phases=collections.Counter();stopped_by_phase=collections.Counter();crossings=[];stop_seconds=0.;previous=None
     stale=0;recognition_stale=0
     for row in rows:
         now=row['sim_time'];x,y=row['gt_xy'];speed=abs(row['speed_mps'])
@@ -64,17 +64,20 @@ def evaluate(rows, approach, movement, front_offset):
         if previous:
             elapsed=now-previous['time']
             if 0<=elapsed<=1 and distance>=-.2 and speed<.1 and not permits(state,movement) and visual_fresh:
-                if previous['stopped_for_signal']:stop_seconds+=elapsed
+                if previous['stopped_for_signal']:
+                    stop_seconds+=elapsed
+                    if previous['state']==state:stopped_by_phase[state]+=elapsed
             if previous['distance']>0>=distance:
                 crossings.append(dict(visual_state=state,recognized_label=label,
                     permission=permits(state,movement),visual_fresh=visual_fresh,
                     recognition_fresh=recognition_fresh,sample_interval_valid=0<elapsed<=1,
                     speed_mps=speed))
-        previous=dict(time=now,distance=distance,
+        previous=dict(time=now,distance=distance,state=state,
             stopped_for_signal=(distance>=-.2 and speed<.1 and not permits(state,movement) and visual_fresh))
     legal=bool(crossings) and all(c['permission'] and c['visual_fresh'] and c['sample_interval_valid'] for c in crossings)
     return dict(movement=movement,samples=len(rows),phase_samples=dict(phases),
         classification_counts=dict(counts),crossings=crossings,stopped_on_nonpermissive_seconds=stop_seconds,
+        stopped_on_nonpermissive_seconds_by_phase=dict(stopped_by_phase),
         stale_visual_samples=stale,stale_recognition_samples=recognition_stale,
         legal_stopline_crossing_observed=legal,
         stop_then_permitted_crossing_observed=legal and stop_seconds>=2,

@@ -1,14 +1,14 @@
 {
-  "as_of": "2026-10-30T11:05:49.244427+00:00",
+  "as_of": "2026-10-30T11:23:10.538516+00:00",
   "passed": true,
-  "scope": "Fresh builds/assets, GPU parity, stopped startup, 8m native smoke and 40.6m native straight ARRIVED; full integration/portable launcher qualification remains incomplete",
+  "scope": "Fresh builds/assets, GPU parity, stopped startup, bounded smoke, straight and protected-left native ARRIVED with one-approach signal checks; portable launcher and remaining integration checks incomplete",
   "tests": {
     "runtime": 58,
     "classifier": 7,
-    "preparation": 44,
+    "preparation": 53,
     "map_selection": 22
   },
-  "total_unit_tests": 131,
+  "total_unit_tests": 140,
   "models": [
     {
       "file": "korean_tl_yolox_s_pilot_batch_1.onnx",
@@ -216,6 +216,106 @@
       "model_or_safety_thresholds_relaxed": false
     }
   ],
-  "source_files": 100,
-  "git_payload_bytes": 371222
+  "fresh_left_route": {
+    "passed": true,
+    "native_arrived": true,
+    "render_quality": "Epic",
+    "distance_m": 38.12272601619353,
+    "max_ekf_gt_xy_m": 0.22713064667346078,
+    "max_physical_speed_mps": 1.392017126083374,
+    "collision_events": 0,
+    "shutdown_passed": true,
+    "signal_evaluation": {
+      "movement": "left",
+      "samples": 634,
+      "phase_samples": {
+        "red": 239,
+        "green": 190,
+        "greenleft": 187,
+        "yellow": 18
+      },
+      "classification_counts": {
+        "red -> red": 164,
+        "green -> green": 190,
+        "greenleft -> green": 1,
+        "greenleft -> greenleft": 37
+      },
+      "crossings": [
+        {
+          "visual_state": "greenleft",
+          "recognized_label": "greenleft",
+          "permission": true,
+          "visual_fresh": true,
+          "recognition_fresh": true,
+          "sample_interval_valid": true,
+          "speed_mps": 0.7769743505203318
+        }
+      ],
+      "stopped_on_nonpermissive_seconds": 28.350000422999983,
+      "stopped_on_nonpermissive_seconds_by_phase": {
+        "red": 8.35000012499998,
+        "green": 19.90000029699999
+      },
+      "stale_visual_samples": 0,
+      "stale_recognition_samples": 0,
+      "legal_stopline_crossing_observed": true,
+      "stop_then_permitted_crossing_observed": true,
+      "scope": "One approach; GT/visual states are evaluation only, no input to recognition/control. Not generalized accuracy or whole-map qualification."
+    },
+    "lane_boundary_qualification": false
+  },
+  "redleft_straight_trial": {
+    "native_arrived": true,
+    "shutdown_passed": true,
+    "engagement_phase": "redleft",
+    "distance_m": 40.51378859240413,
+    "max_ekf_gt_xy_m": 0.24666732506537078,
+    "signal_evaluation": {
+      "movement": "straight",
+      "samples": 685,
+      "phase_samples": {
+        "redleft": 89,
+        "yellow": 19,
+        "red": 280,
+        "green": 189,
+        "greenleft": 108
+      },
+      "classification_counts": {
+        "redleft -> redleft": 89,
+        "yellow -> redleft": 2,
+        "yellow -> yellow": 17,
+        "red -> yellow": 1,
+        "red -> red": 279,
+        "green -> red": 2,
+        "green -> green": 37
+      },
+      "crossings": [
+        {
+          "visual_state": "green",
+          "recognized_label": "green",
+          "permission": true,
+          "visual_fresh": true,
+          "recognition_fresh": true,
+          "sample_interval_valid": true,
+          "speed_mps": 0.7212639788284726
+        }
+      ],
+      "stopped_on_nonpermissive_seconds": 32.500000485000044,
+      "stopped_on_nonpermissive_seconds_by_phase": {
+        "redleft": 1.650000024999997,
+        "yellow": 0.8500000129999989,
+        "red": 29.850000445000035
+      },
+      "stale_visual_samples": 0,
+      "stale_recognition_samples": 0,
+      "legal_stopline_crossing_observed": true,
+      "stop_then_permitted_crossing_observed": true,
+      "scope": "One approach; GT/visual states are evaluation only, no input to recognition/control. Not generalized accuracy or whole-map qualification."
+    },
+    "redleft_stationary_minimum_seconds": 2.0,
+    "redleft_stationary_duration_requirement_met": false,
+    "additional_confirmation_pending": true
+  },
+  "source_files": 102,
+  "git_payload_bytes": 383358
 }
