@@ -18,7 +18,7 @@ def save(path,value):
     with path.open('x') as output:json.dump(value,output,indent=2);output.write('\n')
 
 
-def prepare(installation,share,destination,host,port,domain):
+def prepare(installation,share,destination,host,port,domain,headless=True):
     if destination.exists() or destination.is_symlink():raise ValueError('New runtime folder required')
     if destination==ROOT or ROOT in destination.parents:raise ValueError('Private runtime must be outside public repository')
     installed=json.loads((installation/'assets-installation.json').read_text())
@@ -29,7 +29,7 @@ def prepare(installation,share,destination,host,port,domain):
     for key,name in [('lanelet','lanelet2_map.osm'),('pointcloud','pointcloud_map.pcd')]:
         if digest(installation/'autoware_map'/name)!=profile[key]['sha256']:raise ValueError('Map/PCD mismatch')
     runtime=validate(dict(schema=1,simulation_only=True,auto_engage=False,auto_resume=False,
-                          carla_host=host,carla_port=port,ros_domain_id=domain,headless=True,render_quality='Epic',
+                          carla_host=host,carla_port=port,ros_domain_id=domain,headless=headless,render_quality='Epic',
                           carla_map=installed['carla_map'],installation_id=str(uuid.uuid4())))
     if not (share/'launch/adsw_perception.launch.xml').is_file():raise ValueError('Extract the new native obigo_launch share first')
     destination.mkdir(parents=True,mode=0o700)
@@ -40,6 +40,10 @@ def prepare(installation,share,destination,host,port,domain):
     for name in ('plan.json','placements.json'):
         shutil.copy2(config/name,destination/'signal_network_v1'/name)
     shutil.copytree(share,destination/'share/obigo_launch')
+    if not headless:
+        from gui_support import configure_rviz
+        rviz=destination/'share/obigo_launch/rviz/autoware.rviz'
+        rviz.write_text(yaml.safe_dump(configure_rviz(yaml.safe_load(rviz.read_text())),sort_keys=False))
     launch_config=destination/'share/obigo_launch/config'
     localization=json.loads((config/'localization.json').read_text())
     if localization['pose_source']!='ndt' or localization['ground_truth_pose_relay'] is not False:

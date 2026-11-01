@@ -1,4 +1,4 @@
-"""Initialize and supervise one local headless CARLA/Autoware session.
+"""Initialize and supervise one local CARLA/Autoware session (GUI is opt-in).
 
 Never builds, downloads, repairs storage, modifies a daemon, or engages by default.
 All map/profile/results are private. Keep this session bundle outside public Git.
@@ -23,6 +23,7 @@ import uuid
 from prepare import ROOT
 from prepare_runtime import prepare, validate as validate_runtime
 from container_command import partition_command, safe_name
+from gui_support import prepare_gui, check_gui
 from session_support import (command, endpoint, digest, save, mount_record, mount_health,
     validate_descriptor, verify_files, gpu_identity, check_owned_volumes, GIB)
 
@@ -45,6 +46,7 @@ def pin_image(client,reference):
 
 def initialize(a):
     if os.getuid()!=1000:raise ValueError('Current native image profile requires host uid 1000')
+    if a.gui and a.parent:raise ValueError('GUI currently requires a normal host NVIDIA Docker daemon')
     safe_name(a.name);client=docker(a.docker_host);outer=docker(a.parent_host)
     bundle=a.bundle.resolve();installation=a.installation.resolve()
     if bundle.exists() or a.bundle.is_symlink():raise ValueError('New private bundle directory required')
@@ -88,6 +90,7 @@ def initialize(a):
         raise ValueError('Non-default local endpoint needs explicit verified parent mapping')
     images={k:pin_image(client,getattr(a,k)) for k in ('perception','decision','control')}
     bundle.mkdir(mode=0o700);(bundle/'runs').mkdir()
+    gui=prepare_gui(bundle) if a.gui else None
     unique=uuid.uuid4().hex[:12];seed=a.name+'-'+unique+'-seed'
     volumes={k:a.name+'-'+unique+'-'+k for k in ('map','data','source','models','engines')}
     # New uniquely named volumes only; never reuse or overwrite external volumes.
@@ -100,7 +103,7 @@ def initialize(a):
         create+=['--mount',f'type=volume,src={volumes[key]},dst={target}']
     command(create+['--entrypoint','/bin/true',images['perception']])
     command(client+['cp',seed+':/opt/autoware/share/obigo_launch',str(bundle/'native-share')])
-    prepare(installation,bundle/'native-share',bundle/'stage',host,a.port,a.domain)
+    prepare(installation,bundle/'native-share',bundle/'stage',host,a.port,a.domain,headless=not a.gui)
     for source,target in [(installation/'autoware_map','/autoware_map'),(a.models,'/models')]:
         command(client+['cp',str(source.resolve())+'/.',seed+':'+target],timeout=120)
     command(client+['cp',str(a.centerpoint.resolve()),seed+':/autoware_data/lidar_centerpoint'],timeout=120)
@@ -112,7 +115,7 @@ def initialize(a):
         docker_host=a.docker_host,parent_host=a.parent_host,daemon=daemon,parent=parent,
         gpu_driver_dir=a.gpu_driver_dir,images=images,volumes=volumes,seed=seed,bundle_id=unique,
         bulk_mount=bulk,runtime_mount=runtime_mount,gpu=gpu_identity(),models=models,centerpoint=centerpoint,
-        engine_report=engine_report,
+        engine_report=engine_report,gui=gui,
         map_files=[dict(file=f.name,sha256=digest(f)) for f in (installation/'autoware_map').iterdir() if f.is_file()],
         stage_files={str(f.relative_to(bundle/'stage')):digest(f) for f in (bundle/'stage').rglob('*') if f.is_file()},
         created_wall_time=time.time())
@@ -137,6 +140,11 @@ class Session:
                 raise RuntimeError('Isolated parent identity/resources changed')
         if gpu_identity()!=self.cfg['gpu']:raise RuntimeError('GPU/driver changed; regenerate engines and initialize again')
         self.settings=validate_runtime(json.loads((self.stage/'config/runtime.json').read_text()))
+        self.gui=self.cfg.get('gui')
+        if bool(self.gui)==self.settings['headless']:raise ValueError('GUI profile and session differ')
+        if self.gui:
+            if self.parent:raise ValueError('GUI requires normal host GPU runtime')
+            check_gui(self.gui)
         expected_host=value['NetworkSettings']['Networks']['bridge']['Gateway'] if self.parent else '127.0.0.1'
         if self.settings['carla_host']!=expected_host:raise RuntimeError('Runtime bridge target differs from verified local server gateway')
         for name,expected in self.cfg['stage_files'].items():
@@ -229,11 +237,13 @@ class Session:
             binary=Path(self.cfg['installation'])/'carla/CarlaUE4/Binaries/Linux/CarlaUE4-Linux-Shipping'
             if digest(binary)!=OFFICIAL_BINARY:raise RuntimeError('CARLA binary changed')
             resource.setrlimit(resource.RLIMIT_CORE,(0,0))
-            cmd=[str(binary),'CarlaUE4','-RenderOffScreen','-ResX=640','-ResY=360','-quality-level=Epic',
+            display_args=['-windowed','-ResX=1280','-ResY=720'] if self.gui else ['-RenderOffScreen','-ResX=640','-ResY=360']
+            cmd=[str(binary),'CarlaUE4',*display_args,'-quality-level=Epic',
                 f'-carla-rpc-port={port}',f'-carla-streaming-port={port+1}',f'-carla-secondary-port={port+2}',
                 '-nosound','-prefernvidia','-ExecCmds=t.MaxFPS 20','-UserDir='+str(self.out/'server_user')]
             with (self.out/'server.log').open('x') as log:
                 env=os.environ.copy();env.setdefault('DISPLAY',':1');env.setdefault('XAUTHORITY','/run/user/1000/gdm/Xauthority')
+                if self.gui:env.update(DISPLAY=self.gui['display'],XAUTHORITY=self.gui['authority'])
                 self.server=subprocess.Popen(cmd,cwd=binary.parents[3],env=env,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
             save(self.out/'server.json',dict(pid=self.server.pid,command=cmd))
             deadline=time.monotonic()+150
@@ -262,7 +272,7 @@ class Session:
             for kind in ('control','decision','perception'):
                 name=self.label+'-'+kind
                 args=partition_command(kind,self.cfg['images'][kind],name,self.label,str(self.runtime),
-                    self.cfg['volumes'],self.settings['ros_domain_id'],self.cfg['gpu_driver_dir'])
+                    self.cfg['volumes'],self.settings['ros_domain_id'],self.cfg['gpu_driver_dir'],gui=self.gui)
                 cid=command(self.client+args).stdout.strip();self.children.append(cid);self.names[kind]=name
             active=dict(label=self.label,run=str(self.out),runtime=str(self.runtime),names=self.names,
                 supervisor_pid=os.getpid(),started=time.time())
@@ -376,6 +386,7 @@ def main():
     init.add_argument('--name',required=True);init.add_argument('--map',choices=['ctrack'],required=True)
     init.add_argument('--docker-host',default='unix:///var/run/docker.sock');init.add_argument('--parent-host',default='unix:///var/run/docker.sock')
     init.add_argument('--parent');init.add_argument('--gpu-driver-dir')
+    init.add_argument('--gui',action='store_true',help='Opt-in visible CARLA and RViz; local X11 and normal host GPU runtime required')
     init.add_argument('--port',type=int,default=2480);init.add_argument('--domain',type=int,default=222)
     for kind,default in [('perception','perception-runtime'),('decision','adsw-decision-carla'),('control','adsw-control-carla')]:
         init.add_argument('--'+kind,default='katech-autoware-sils:'+default)

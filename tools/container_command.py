@@ -22,7 +22,7 @@ def directory(value):
     return str(path)
 
 
-def partition_command(kind,image,name,label,runtime,volumes,domain,gpu_driver_dir=None):
+def partition_command(kind,image,name,label,runtime,volumes,domain,gpu_driver_dir=None,gui=None):
     if kind not in ('perception','decision','control'):raise ValueError('Unknown partition')
     if not re.fullmatch(r'sha256:[a-f0-9]{64}',image):raise ValueError('Resolve and pin image ID before launch')
     safe_name(name);safe_name(label);runtime=directory(runtime)
@@ -30,9 +30,16 @@ def partition_command(kind,image,name,label,runtime,volumes,domain,gpu_driver_di
     if set(volumes)!={'map','data','source','models','engines'}:raise ValueError('All explicit volume roles required')
     if len(set(volumes.values()))!=5:raise ValueError('Volume roles must not alias')
     for value in volumes.values():safe_name(value)
+    if gui:
+        from gui_support import validate_gui
+        validate_gui(gui)
+        if gpu_driver_dir:raise ValueError('GUI requires the normal host NVIDIA runtime')
     cmd=['run','-d','--name',name,'--label','katech.sils.role='+label,
          '--network','host','--user','1000:1000','--cap-drop','ALL','--security-opt','no-new-privileges',
          '--shm-size','1g','--tmpfs','/tmp:rw,size=2g','--log-driver','local','--log-opt','max-size=10m','--log-opt','max-file=2']
+    if not gpu_driver_dir:
+        memory,cpus={'perception':('24g','8'),'decision':('8g','4'),'control':('4g','2')}[kind]
+        cmd+=['--memory',memory,'--memory-swap',memory,'--cpus',cpus]
     env={'ROS_DOMAIN_ID':str(domain),'ROS_LOCALHOST_ONLY':'1','RMW_IMPLEMENTATION':'rmw_cyclonedds_cpp',
          'CYCLONEDDS_URI':'file:///code/cyclonedds.xml','ROS_LOG_DIR':'/results/logs/ros_'+kind,
          'HOME':'/tmp','PYTHONDONTWRITEBYTECODE':'1',
@@ -49,6 +56,10 @@ def partition_command(kind,image,name,label,runtime,volumes,domain,gpu_driver_di
             env['LD_LIBRARY_PATH']='/opt/nvidia:/usr/local/cuda/lib64:/usr/local/cuda/targets/x86_64-linux/lib'
         else:
             cmd+=['--gpus','all'];env['NVIDIA_DRIVER_CAPABILITIES']='compute,utility'
+            if gui:
+                env.update(DISPLAY=gui['display'],XAUTHORITY='/run/sils-gui/Xauthority',QT_X11_NO_MITSHM='1',
+                    NVIDIA_DRIVER_CAPABILITIES='compute,utility,graphics,display')
+                binds.extend([(gui['socket'],gui['socket'],True),(gui['authority'],'/run/sils-gui/Xauthority',True)])
         binds.append((runtime+'/signal_network_v1/placements.json','/placements.json',True))
     if kind=='decision':env['LD_PRELOAD']='/opt/autoware/lib/libstop_distance_guard.so:/opt/autoware/lib/libplugin_lifetime.so'
     for src,dst,ro in binds:cmd+=['--mount',f'type=bind,src={src},dst={dst}'+(',readonly' if ro else '')]

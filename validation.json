@@ -1,14 +1,14 @@
 {
-  "as_of": "2026-10-30T12:13:40.355165+00:00",
+  "as_of": "2026-11-01T03:54:41.678321+00:00",
   "passed": true,
-  "scope": "Same-PC fresh installation, headless simulator, selected low-speed routes and one signal approach; not full-road, high-speed, HIL, real vehicle, GUI or other-PC qualification",
+  "scope": "Same-PC fresh installation; selected headless low-speed routes and one signal approach; normal host NVIDIA Docker GUI display, pose/goal topic path and bounded 8m driving; NOT whole-road, high-speed, all GUI mouse interactions, other-PC, HIL or real-vehicle qualification",
   "tests": {
     "runtime": 58,
     "classifier": 7,
-    "preparation": 71,
+    "preparation": 80,
     "map_selection": 24
   },
-  "total_unit_tests": 160,
+  "total_unit_tests": 169,
   "models": [
     {
       "file": "korean_tl_yolox_s_pilot_batch_1.onnx",
@@ -445,7 +445,66 @@
     "other_host_not_tested": true,
     "normal_host_gpu_mode_runtime_tested": false
   },
-  "integration_scope": "Same-PC fresh installation, headless simulator, selected low-speed routes and one signal approach; not full-road, high-speed, HIL, real vehicle, GUI or other-PC qualification",
-  "source_files": 105,
-  "git_payload_bytes": 433517
+  "integration_scope": "Same-PC fresh installation; selected headless low-speed routes and one signal approach; normal host NVIDIA Docker GUI display, pose/goal topic path and bounded 8m driving; NOT whole-road, high-speed, all GUI mouse interactions, other-PC, HIL or real-vehicle qualification",
+  "source_files": 107,
+  "git_payload_bytes": 446312,
+  "normal_host_gui_checks": {
+    "date": "2026-11-01",
+    "passed": true,
+    "same_pc_only": true,
+    "standard_gpus_all": true,
+    "manual_gpu_driver_binds": false,
+    "cuda_init": 0,
+    "trt_version": "10.8.0.43",
+    "onnxruntime_providers": [
+      "AzureExecutionProvider",
+      "CPUExecutionProvider"
+    ],
+    "same_verified_image_ids": {
+      "perception-runtime-clean30": "sha256:af2edaa2ead2cb25ac6eecf1f439de1d31ffd35d7c008c03937c2db24ae0dd1b",
+      "adsw-decision-carla": "sha256:93fe736ac762f485ccadca09bab14066755ed12a6d7f95ea277b194d43c7b81f",
+      "adsw-control-carla": "sha256:5f3699d2a5320b9cbb494877072b8e758355538bf7f895d2c36e2f29542b5b54"
+    },
+    "carla_and_rviz_windows_inspected": true,
+    "vehicle_centered_map": true,
+    "raw_camera_panel_verified": true,
+    "raw_camera_panel_is_inference_overlay": false,
+    "private_screenshot_sha256": {
+      "carla_image": "4f6cdf3ac0b7da066ef58fc12e63353601243ff4cf40bfbd1d3a3b9fa29622b7",
+      "rviz_image": "000d0e2e65a13e16cee8f9128b86ecf939ea11cc5785ced9a1890d721e368940"
+    },
+    "mouse_click_test": false,
+    "pose_and_goal_topic_probe": {
+      "passed": true,
+      "mouse_click_test": false,
+      "auto_engage": false,
+      "rviz_node_present": true,
+      "pose_subscribers": 3,
+      "goal_subscribers": 1,
+      "fresh_ndt_after_pose": 114,
+      "new_route_uuid": true,
+      "route_segments": 9,
+      "trajectory_points": 133,
+      "stop_confirmed": true
+    },
+    "bounded_driving": {
+      "passed": true,
+      "cap_kmh": 5,
+      "distance_m": 8.021684755347968,
+      "max_speed_mps": 1.2865943966633702,
+      "max_ekf_gt_xy_m": 0.19336162667624507,
+      "stop_confirmed": true
+    },
+    "physical_trial": {
+      "passed": true,
+      "collision_events": 0,
+      "max_physical_speed_mps": 1.3339303731918335
+    },
+    "display_profile_stopped_startup_passed": true,
+    "display_profile_shutdown_passed": true,
+    "both_runs_all_three_partitions_exit_zero_no_oom": true,
+    "default_system_docker_images_unchanged": true,
+    "hil_real_vehicle_configuration_changed": false,
+    "recognition_accuracy_qualification": false
+  }
 }
