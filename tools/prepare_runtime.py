@@ -8,6 +8,7 @@ import uuid
 import yaml
 from prepare import ROOT, digest
 from install_assets import verify_manifest, relative
+from ndt_profile import bounded_step_profile
 
 sys.path.insert(0,str(ROOT/'reference_runtime'))
 from runtime_config import validate
@@ -53,6 +54,9 @@ def prepare(installation,share,destination,host,port,domain,headless=True):
         output=launch_config/relative(target)
         if not output.is_file():raise ValueError('Missing native NDT config override target: '+target)
         shutil.copy2(original,output)
+    ndt_path=launch_config/'localization/ndt_scan_matcher/ndt_scan_matcher.param.yaml'
+    ndt_configuration=bounded_step_profile(yaml.safe_load(ndt_path.read_text()))
+    ndt_path.write_text(yaml.safe_dump(ndt_configuration,sort_keys=False))
     speed=launch_config/'planning/scenario_planning/common/common.param.yaml'
     params=yaml.safe_load(speed.read_text())
     params['/**']['ros__parameters']['max_vel']=50./3.6
@@ -68,6 +72,7 @@ def prepare(installation,share,destination,host,port,domain,headless=True):
          supervisor='host-owned clean-install supervisor; checks RAID identity/error count, free space, log budget and process ownership'))
     result=dict(schema=1,installation_id=runtime['installation_id'],map_sha256=profile['lanelet']['sha256'],
                 pcd_sha256=profile['pointcloud']['sha256'],config_source='verified private profile and freshly built native share',
+                ndt_optimizer_override=dict(step_size=.05,trans_epsilon=.01,safety_score_thresholds_changed=False),
                 starts_simulation=False,auto_engage=False,full_integration_complete=False)
     save(destination/'prepared-runtime.json',result)
     return result

@@ -13,32 +13,41 @@ import rclpy
 from rclpy.qos import QoSProfile, DurabilityPolicy, ReliabilityPolicy
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import PoseWithCovarianceStamped
-from autoware_planning_msgs.msg import Trajectory
+from autoware_planning_msgs.msg import Trajectory, LaneletRoute
 from autoware_adapi_v1_msgs.msg import OperationModeState, RouteState
 from autoware_adapi_v1_msgs.srv import ChangeOperationMode
 from tier4_planning_msgs.msg import VelocityLimit
 from std_msgs.msg import String
+from diagnostic_msgs.msg import DiagnosticArray
 from runtime_config import load
 from runtime_storage27 import guard_health
-from trial_checks import cap_confirmed, motion_problem
+from trial_checks import cap_confirmed, motion_problem, low_speed_cap, diagnostic_level, arrival_confirmed
 
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--full-route',action='store_true',help='Wait for native ARRIVED instead of 8 m, maximum 300 seconds')
+    parser.add_argument('--cap-kmh',type=float,default=5,help='Explicit lower qualification cap, 1..5 km/h; default 5')
     parser.add_argument('--wait-for-phase',choices=['redleft','green'],help='Test orchestration only: wait in STOP for matching visual and camera-classified phase')
     args=parser.parse_args()
+    cap=low_speed_cap(args.cap_kmh)
     if args.wait_for_phase and not args.full_route:raise ValueError('Phase wait requires explicit route trial')
     config = load()
     rclpy.init()
     node = rclpy.create_node('fresh_install_bounded_drive')
     node.set_parameters([rclpy.Parameter('use_sim_time', value=True)])
     latest, received, subscriptions = {}, {}, []
+    diagnostic_state={}
     transient = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL)
     live = QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT)
     def receive(key, message):
         latest[key] = message
         received[key] = time.monotonic()
+    def receive_diagnostics(message):
+        for status in message.status:
+            diagnostic_state[status.name]=dict(level=diagnostic_level(status.level),message=status.message,
+                values={x.key:x.value for x in status.values},received=time.monotonic())
+    subscriptions.append(node.create_subscription(DiagnosticArray,'/diagnostics',receive_diagnostics,live))
     for key, typ, topic, qos in [
         ('odom', Odometry, '/localization/kinematic_state', live),
         ('ndt', PoseWithCovarianceStamped, '/localization/pose_estimator/pose_with_covariance', live),
@@ -46,11 +55,12 @@ def main():
         ('trajectory', Trajectory, '/planning/scenario_planning/trajectory', live),
         ('mode', OperationModeState, '/api/operation_mode/state', transient),
         ('route_state', RouteState, '/api/routing/state', transient),
+        ('route', LaneletRoute, '/planning/mission_planning/route', transient),
         ('recognition', String, '/ctrack/recognition/diagnostics', live),
         ('limit', VelocityLimit, '/planning/scenario_planning/current_max_velocity', transient)]:
         subscriptions.append(node.create_subscription(typ, topic, lambda m,k=key:receive(k,m), qos))
     publisher = node.create_publisher(VelocityLimit, '/planning/scenario_planning/max_velocity_default', transient)
-    report = dict(passed=False, simulator_only=True, cap_kmh=5, requested_distance_m=8,
+    report = dict(passed=False, simulator_only=True, cap_kmh=args.cap_kmh, requested_distance_m=8,
                   lane_boundary_qualification=False, engaged=False, rows=[])
     goal=json.loads(Path('/results/config/start.json').read_text())['smoke_test_goal']['position']
     report['full_route_requested']=args.full_route
@@ -75,19 +85,25 @@ def main():
     try:
         spin(5)
         fresh()
+        private_case=Path('/results/config/qualification-input.json')
+        if private_case.exists():
+            required=json.loads(private_case.read_text())['case'].get('required_route_ids',[])
+            ids=[s.preferred_primitive.id for s in latest['route'].segments] if 'route' in latest else []
+            report['route_lanelets']=ids
+            if required and ids!=required:raise RuntimeError('Generated route differs from the designated qualification course')
         state = latest['mode']
         if state.mode!=1 or not state.is_autonomous_mode_available:raise RuntimeError('STOP/autonomous availability precondition failed')
         if abs(latest['odom'].twist.twist.linear.x)>.05:raise RuntimeError('Vehicle is not stopped')
         for _ in range(3):
             message = VelocityLimit();message.stamp=node.get_clock().now().to_msg()
-            message.max_velocity=5/3.6;message.sender='ctrack_user';publisher.publish(message);spin(.3)
+            message.max_velocity=cap;message.sender='ctrack_user';publisher.publish(message);spin(.3)
         deadline=time.monotonic()+15
         while time.monotonic()<deadline:
             spin(.2);fresh()
             points=latest['trajectory'].points
             if ('limit' in latest and cap_confirmed(latest['limit'].max_velocity,
-                (p.longitudinal_velocity_mps for p in points))):break
-        else:raise RuntimeError('5 km/h cap not confirmed in trajectory and selected limit')
+                (p.longitudinal_velocity_mps for p in points),cap=cap)):break
+        else:raise RuntimeError('Requested low-speed cap not confirmed in trajectory and selected limit')
         if args.wait_for_phase:
             signal_id=str(json.loads(Path('/results/config/private_trial.json').read_text())['signal_id'])
             deadline=time.monotonic()+180
@@ -106,8 +122,6 @@ def main():
         while time.monotonic()-start<(300 if args.full_route else 120):
             spin(.1);fresh()
             state=latest['mode']
-            if (state.mode!=2 or state.is_in_transition) and time.monotonic()>transition_deadline:
-                raise RuntimeError('Autonomous mode unavailable during trial')
             p=latest['odom'].pose.pose.position;g=latest['gt'].pose.pose.position
             n=latest['ndt'].pose.pose.position
             speed=abs(latest['odom'].twist.twist.linear.x)
@@ -122,9 +136,17 @@ def main():
                 ekf_gt_xy_m=error,ndt_gt_xy_m=math.hypot(n.x-g.x,n.y-g.y),mode=state.mode,
                 visual_states=visual['states'],visual_sim_time=visual['sim_time'],visual_wall_time=visual['wall_time'],
                 recognition=json.loads(latest['recognition'].data)))
-            if args.full_route and 'route_state' in latest and latest['route_state'].state==RouteState.ARRIVED:
-                if math.hypot(p.x-goal['x'],p.y-goal['y'])<2 and speed<.1:
-                    report['native_arrived']=True;break
+            if arrival_confirmed(args.full_route,
+                'route_state' in latest and latest['route_state'].state==RouteState.ARRIVED,
+                state.mode,speed,math.hypot(p.x-goal['x'],p.y-goal['y'])):
+                report['native_arrived']=True;report['arrival_mode']=state.mode;break
+            if (state.mode!=2 or state.is_in_transition) and time.monotonic()>transition_deadline:
+                report['mode_at_failure']=dict(mode=state.mode,in_transition=state.is_in_transition,
+                    autonomous_available=state.is_autonomous_mode_available)
+                report['active_diagnostics_at_failure']={k:v for k,v in diagnostic_state.items()
+                    if v['level']>0 and time.monotonic()-v['received']<3}
+                report['route_state_at_failure']=latest['route_state'].state if 'route_state' in latest else None
+                raise RuntimeError('Autonomous mode unavailable during trial')
             if not args.full_route and distance>=8:
                 report['distance_completed']=True;break
         else:raise RuntimeError('No requested route/distance completion before bounded deadline')

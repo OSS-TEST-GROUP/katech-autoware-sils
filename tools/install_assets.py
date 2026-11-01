@@ -22,6 +22,13 @@ def checked(path, record):
         raise ValueError('Archive checksum/size mismatch: '+path.name)
 
 
+def selected_lanelet(base_root, profile_root, record):
+    source=record.get('source','base_assets')
+    roots={'base_assets':base_root,'runtime_profile':profile_root}
+    if source not in roots:raise ValueError('Unknown private lanelet source')
+    return roots[source]/relative(record['path'])
+
+
 def extract(archive, destination, *, private=False, limit=60*1024**3):
     """Reject traversal, special files, collisions and private symlinks.
 
@@ -107,7 +114,7 @@ def install(downloads,destination,map_id):
             (content/name).rename(target)
         config=destination/'profile/sils_map_config'
         contract=json.loads((config/'profile.json').read_text())
-        lane=private_root/relative(contract['lanelet']['path'])
+        lane=selected_lanelet(private_root,destination/'profile',contract['lanelet'])
         pcd=destination/'profile'/relative(contract['pointcloud']['path'])
         if digest(lane)!=contract['lanelet']['sha256'] or digest(pcd)!=contract['pointcloud']['sha256']:
             raise ValueError('Selected map does not match private profile')
@@ -117,6 +124,7 @@ def install(downloads,destination,map_id):
             shutil.copy2(source,selected_map/name)
         report.update(base_asset_sha256=base['sha256'],profile_sha256=profile['sha256'],
                       selected_map={'lanelet_sha256':digest(lane),'pcd_sha256':digest(pcd),
+                                    'lanelet_source':contract['lanelet'].get('source','base_assets'),
                                     'pcd_source':'profile/sils_map_config/ndt/pointcloud_map.pcd',
                                     'legacy_pcd_used':False})
     (destination/'assets-installation.json').write_text(json.dumps(report,indent=2)+'\n')

@@ -4,11 +4,20 @@ from pathlib import Path
 import tarfile
 import tempfile
 import unittest
-from install_assets import extract, relative, install, verify_manifest
+from install_assets import extract, relative, install, verify_manifest, selected_lanelet
 from prepare import digest
 
 
 class InstallTests(unittest.TestCase):
+    def test_legacy_lanelet_source_unchanged(self):
+        self.assertEqual(selected_lanelet(Path('/base'),Path('/profile'),{'path':'maps/lanelet2_map.osm'}),Path('/base/maps/lanelet2_map.osm'))
+    def test_explicit_profile_lanelet(self):
+        self.assertEqual(selected_lanelet(Path('/base'),Path('/profile'),{'source':'runtime_profile','path':'sils_map_config/lanelet2_map.osm'}),Path('/profile/sils_map_config/lanelet2_map.osm'))
+    def test_unknown_lanelet_source_rejected(self):
+        with self.assertRaises(ValueError):selected_lanelet(Path('/base'),Path('/profile'),{'source':'external','path':'map.osm'})
+    def test_lanelet_source_cannot_escape(self):
+        for path in ('../map.osm','/map.osm','a/../../map.osm','a\\map.osm'):
+            with self.assertRaises(ValueError):selected_lanelet(Path('/base'),Path('/profile'),{'source':'runtime_profile','path':path})
     def archive(self,folder,rows):
         p=folder/'input.tar'
         with tarfile.open(p,'w') as out:
