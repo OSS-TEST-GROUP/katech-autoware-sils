@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "version": "v0.1.0",
+  "repository": "OSS-TEST-GROUP/katech-autoware-sils",
+  "release_url": "https://github.com/OSS-TEST-GROUP/katech-autoware-sils/releases/tag/v0.1.0",
+  "owner_approved_date": "2026-11-02",
+  "distribution": "Pinned public source/build tools and documentation; dependencies downloaded separately",
+  "scope": "Selected same-PC SILS routes with documented limitations; not whole-map or hardware qualification",
+  "target": "Ubuntu 22.04 amd64 with NVIDIA GPU; tested on RTX 4080",
+  "runtime_baseline_commit": "31ecc36193e4b95fd6b205b3474b7406ea791f21",
+  "runtime_changed_for_release": false,
+  "new_driving_test_on_release_date": false,
+  "whole_map_qualified": false,
+  "hil_or_real_vehicle_qualified": false,
+  "known_limitations": [
+    "S-course physical curb/Lanelet2 mismatch remains unresolved; excluded from passed scope",
+    "Grades can exceed the requested speed; precise grade speed tracking excluded from passed scope",
+    "50 km/h, other-PC installation and generalized perception accuracy are unqualified",
+    "Current runtime supports C-Track only and requires private repository access",
+    "Traffic-light ROI projection retains simulator GT pose assumptions",
+    "Earlier GUI tests used NDT step 0.1; step 0.05 expanded tests were headless"
+  ],
+  "dependencies": {
+    "carla": "carla.lock.json",
+    "autoware_sources": "sources.lock.json",
+    "traffic_light_models": "models/manifest.json",
+    "map_and_profile": "map_selection/maps.json",
+    "private_map_repository": "OSS-TEST-GROUP/katech-C-Track-Carla-map"
+  },
+  "failed_candidates_included": false,
+  "prebuilt_docker_bundle_included": false,
+  "k_autoware_perception_v030_packages": "Deferred by owner; separate from this SILS release"
+}

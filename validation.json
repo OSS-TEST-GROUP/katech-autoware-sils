@@ -153,7 +153,7 @@
   "recognition_accuracy_test": false,
   "other_pc_verified": false,
   "existing_live_simulation_modified": false,
-  "final_manual_ready": false,
+  "final_manual_ready": true,
   "fresh_stopped_runtime_check": {
     "passed": true,
     "route_requested_while_stopped": true,
@@ -446,8 +446,8 @@
     "normal_host_gpu_mode_runtime_tested": false
   },
   "integration_scope": "Previously validated selected same-PC low-speed integration remains recorded below; current expanded qualification is incomplete, particularly S-course curb/map mismatch. Not a final release.",
-  "source_files": 109,
-  "git_payload_bytes": 529579,
+  "source_files": 110,
+  "git_payload_bytes": 535157,
   "normal_host_gui_checks": {
     "date": "2026-11-01",
     "passed": true,
@@ -2384,13 +2384,49 @@
       "matching_score_and_warning_gates_unchanged": true
     }
   },
-  "final_release_status": "Held: expanded acceptance unresolved; development source/manual update only",
-  "release_scope_decision_pending": true,
+  "final_release_status": "Owner approved v0.1.0 distribution with known limitations; publication is recorded on the linked GitHub Release",
+  "release_scope_decision_pending": false,
   "remaining_items": [
-    "S-course physical curb/map mismatch: no corrected full-route driving pass",
-    "Grade requested-speed overshoot remains; enlarged pitch-bound candidate rejected",
-    "Only selected same-PC routes tested; 50 km/h and whole-map driving not qualified",
-    "Finalize approved release scope/version and final manual only after its acceptance gates pass"
+    "S-course physical curb/map mismatch and feasible-path correction",
+    "Grade requested-speed overshoot; rejected pitch candidate remains excluded",
+    "50 km/h, whole-map driving, other-PC installation and broader perception validation"
   ],
-  "perception_docker_package_build_and_upload": "Deferred by user; not performed in this SILS qualification"
+  "perception_docker_package_build_and_upload": "Deferred by user; not performed in this SILS qualification",
+  "release_document_updated_at": "2026-11-02T00:44:52.394174+00:00",
+  "final_manual_scope": "v0.1.0 owner-approved source distribution with explicit limitations",
+  "final_release_complete_means": "Legacy field: full originally requested expanded qualification, NOT whether a GitHub release has been published",
+  "full_scope_qualification_complete": false,
+  "distribution_release": {
+    "schema": 1,
+    "version": "v0.1.0",
+    "repository": "OSS-TEST-GROUP/katech-autoware-sils",
+    "release_url": "https://github.com/OSS-TEST-GROUP/katech-autoware-sils/releases/tag/v0.1.0",
+    "owner_approved_date": "2026-11-02",
+    "distribution": "Pinned public source/build tools and documentation; dependencies downloaded separately",
+    "scope": "Selected same-PC SILS routes with documented limitations; not whole-map or hardware qualification",
+    "target": "Ubuntu 22.04 amd64 with NVIDIA GPU; tested on RTX 4080",
+    "runtime_baseline_commit": "31ecc36193e4b95fd6b205b3474b7406ea791f21",
+    "runtime_changed_for_release": false,
+    "new_driving_test_on_release_date": false,
+    "whole_map_qualified": false,
+    "hil_or_real_vehicle_qualified": false,
+    "known_limitations": [
+      "S-course physical curb/Lanelet2 mismatch remains unresolved; excluded from passed scope",
+      "Grades can exceed the requested speed; precise grade speed tracking excluded from passed scope",
+      "50 km/h, other-PC installation and generalized perception accuracy are unqualified",
+      "Current runtime supports C-Track only and requires private repository access",
+      "Traffic-light ROI projection retains simulator GT pose assumptions",
+      "Earlier GUI tests used NDT step 0.1; step 0.05 expanded tests were headless"
+    ],
+    "dependencies": {
+      "carla": "carla.lock.json",
+      "autoware_sources": "sources.lock.json",
+      "traffic_light_models": "models/manifest.json",
+      "map_and_profile": "map_selection/maps.json",
+      "private_map_repository": "OSS-TEST-GROUP/katech-C-Track-Carla-map"
+    },
+    "failed_candidates_included": false,
+    "prebuilt_docker_bundle_included": false,
+    "k_autoware_perception_v030_packages": "Deferred by owner; separate from this SILS release"
+  }
 }
